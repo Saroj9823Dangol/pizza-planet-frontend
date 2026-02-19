@@ -129,8 +129,9 @@ export default function Hero() {
                 transition: "opacity 0.2s",
               }}
             >
-              CHEF&apos;S MENU
+              VIEW MENU
             </a>
+
             <a
               href="#order"
               style={{
@@ -146,7 +147,7 @@ export default function Hero() {
                 transition: "transform 0.2s",
               }}
             >
-              START BAKE →
+              ORDER NOW →
             </a>
           </div>
         </motion.div>
@@ -214,7 +215,8 @@ export default function Hero() {
 
 function MarqueeTicker() {
   const text =
-    " 🪵 WOOD FIRED · 🍅 SAN MARZANO · 🥖 48H FERMENTATION · 🌿 FRESH BASIL · 🧀 BUFFALO MOZZARELLA · 🔥 HAND TOSSED · 🤌 ARTISANAL CRAFT · ";
+    " 🪵 WOOD FIRED · 🍅 FRESH TOMATOES · 🥖 HANDMADE DOUGH · 🌿 FRESH BASIL · 🧀 BUFFALO MOZZARELLA · 🔥 HAND TOSSED · 🤌 FRESHLY BAKED · ";
+
   return (
     <div
       style={{

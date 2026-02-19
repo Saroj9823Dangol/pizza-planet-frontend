@@ -6,9 +6,9 @@ import Image from "next/image";
 
 const allLinks = [
   { label: "HOME", href: "#hero" },
-  { label: "CHEF MENU", href: "#menu" },
-  { label: "THE CRAFT", href: "#about" },
-  { label: "ORDER BAKE", href: "#order" },
+  { label: "MENU", href: "#menu" },
+  { label: "OUR STORY", href: "#about" },
+  { label: "ORDER NOW", href: "#order" },
 ];
 
 export default function Navbar() {

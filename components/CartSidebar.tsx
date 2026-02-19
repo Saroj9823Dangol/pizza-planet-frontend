@@ -72,8 +72,9 @@ export default function CartSidebar() {
                     letterSpacing: "0.05em",
                   }}
                 >
-                  ORDERS
+                  YOUR CART
                 </h2>
+
                 <div
                   style={{
                     fontFamily: "Space Mono, monospace",
@@ -83,7 +84,7 @@ export default function CartSidebar() {
                     marginTop: "6px",
                   }}
                 >
-                  {items.length} PIZZAS PREPPED
+                  {items.length} {items.length === 1 ? "ITEM" : "ITEMS"} IN CART
                 </div>
               </div>
               <button onClick={toggleCart} style={closeButtonStyle}>
@@ -104,7 +105,8 @@ export default function CartSidebar() {
                   >
                     🥣
                   </div>
-                  <div>NO DOUGH IN THE TRAY</div>
+                  <div>YOUR CART IS EMPTY</div>
+
                   <button onClick={toggleCart} style={shopButtonStyle}>
                     VIEW MENU
                   </button>
@@ -137,7 +139,7 @@ export default function CartSidebar() {
                             color: "rgba(255,255,255,0.5)",
                           }}
                         >
-                          BASE: {item.price.toLocaleString()}
+                          PRICE: Rs. {item.price.toLocaleString()}
                         </div>
                       </div>
                       <div
@@ -214,8 +216,9 @@ export default function CartSidebar() {
                       letterSpacing: "0.3em",
                     }}
                   >
-                    CHECKSUM
+                    SUBTOTAL
                   </div>
+
                   <div
                     style={{
                       fontFamily: "Righteous, sans-serif",
@@ -228,8 +231,9 @@ export default function CartSidebar() {
                   </div>
                 </div>
                 <button onClick={handleCheckout} style={checkoutButtonStyle}>
-                  FINALIZE ORDER →
+                  CHECKOUT →
                 </button>
+
                 <div
                   style={{
                     textAlign: "center",

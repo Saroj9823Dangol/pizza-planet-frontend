@@ -6,12 +6,12 @@ import { menuItems, MenuCategory } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 
 const categories: { label: string; value: MenuCategory }[] = [
-  { label: "ALL BAKES", value: "All" },
-  { label: "CLASSIC DOUGH", value: "Classic" },
-  { label: "SIGNATURE PIZZAS", value: "Signature" },
-  { label: "VEGAN CRAFT", value: "Vegan" },
-  { label: "EXTRAS", value: "Sides" },
-  { label: "BREWS", value: "Drinks" },
+  { label: "ALL", value: "All" },
+  { label: "CLASSIC", value: "Classic" },
+  { label: "SIGNATURE", value: "Signature" },
+  { label: "VEGAN", value: "Vegan" },
+  { label: "SIDES", value: "Sides" },
+  { label: "DRINKS", value: "Drinks" },
 ];
 
 export default function Menu() {
@@ -44,9 +44,11 @@ export default function Menu() {
       >
         {/* Header - Huge & Aggressive */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          style={{ padding: "10rem 0 6rem" }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{ padding: "clamp(4rem, 10vw, 10rem) 0 4rem" }}
         >
           <h2 style={titleStyle}>
             OUR <br />

@@ -1,16 +1,12 @@
 "use client";
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function About() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: 0.1 });
-
   return (
     <section
       id="about"
-      ref={ref}
       style={{
         background: "#000",
         padding: "clamp(4rem, 12vw, 10rem) clamp(1rem, 5vw, 5rem)",
@@ -22,7 +18,8 @@ export default function About() {
         {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
           style={{ marginBottom: "clamp(4rem, 8vw, 6rem)" }}
         >
@@ -81,7 +78,8 @@ export default function About() {
           {/* TEXT BLOCK */}
           <motion.div
             initial={{ opacity: 0, x: -25 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.2 }}
             style={{ display: "flex", gap: "1.5rem" }}
           >
@@ -137,14 +135,10 @@ export default function About() {
 
           {/* IMAGE BLOCK - SHARP EDGES */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            style={{
-              position: "relative",
-              borderRadius: "0px",
-              overflow: "hidden",
-            }}
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Image
               src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&q=85"

@@ -1,13 +1,21 @@
 "use client";
 import { useCartStore } from "@/lib/store";
-import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCartStore();
   const router = useRouter();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const handlePlaceOrder = () => {
     alert("Thank you! Your order has been placed successfully.");
@@ -21,7 +29,7 @@ export default function CheckoutPage() {
         minHeight: "100vh",
         background: "#000",
         color: "#fff",
-        padding: "100px 1.5rem 4rem",
+        padding: isMobile ? "80px 1rem 4rem" : "120px 1.5rem 8rem",
       }}
     >
       <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
@@ -92,8 +100,8 @@ export default function CheckoutPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "minmax(0, 1fr) 380px",
-            gap: "4rem",
+            gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1fr) 380px",
+            gap: isMobile ? "3rem" : "4rem",
             alignItems: "start",
           }}
         >
@@ -107,7 +115,7 @@ export default function CheckoutPage() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
+                  gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
                   gap: "1.25rem",
                 }}
               >
@@ -119,15 +127,30 @@ export default function CheckoutPage() {
                   <label style={labelStyle}>LAST NAME</label>
                   <input placeholder="Shrestha" style={inputStyle} />
                 </div>
-                <div style={{ ...inputWrapper, gridColumn: "span 2" }}>
+                <div
+                  style={{
+                    ...inputWrapper,
+                    gridColumn: isMobile ? "auto" : "span 2",
+                  }}
+                >
                   <label style={labelStyle}>EMAIL ADDRESS</label>
                   <input placeholder="aarav@example.com" style={inputStyle} />
                 </div>
-                <div style={{ ...inputWrapper, gridColumn: "span 2" }}>
+                <div
+                  style={{
+                    ...inputWrapper,
+                    gridColumn: isMobile ? "auto" : "span 2",
+                  }}
+                >
                   <label style={labelStyle}>PHONE NUMBER</label>
                   <input placeholder="98XXXXXXXX" style={inputStyle} />
                 </div>
-                <div style={{ ...inputWrapper, gridColumn: "span 2" }}>
+                <div
+                  style={{
+                    ...inputWrapper,
+                    gridColumn: isMobile ? "auto" : "span 2",
+                  }}
+                >
                   <label style={labelStyle}>STREET ADDRESS</label>
                   <input
                     placeholder="New Baneshwor, Kathmandu"
@@ -230,9 +253,9 @@ export default function CheckoutPage() {
           <aside
             style={{
               background: "#0a0a0a",
-              padding: "2.5rem",
+              padding: isMobile ? "1.5rem" : "2.5rem",
               border: "1px solid rgba(255,184,48,0.1)",
-              position: "sticky",
+              position: isMobile ? "static" : "sticky",
               top: "100px",
             }}
           >

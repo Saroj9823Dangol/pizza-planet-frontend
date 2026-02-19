@@ -1,16 +1,11 @@
 "use client";
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { testimonials } from "@/lib/data";
 
 export default function Testimonials() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: 0.1 });
-
   return (
     <section
       id="testimonials"
-      ref={ref}
       style={{
         background: "#0a0a0a",
         padding: "clamp(5rem, 15vw, 12rem) clamp(1rem, 5vw, 5rem)",
@@ -24,7 +19,8 @@ export default function Testimonials() {
         {/* Editorial Heading */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
           style={{
             marginBottom: "clamp(5rem, 12vw, 10rem)",
@@ -73,7 +69,7 @@ export default function Testimonials() {
               key={i}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: i * 0.15 }}
               style={{
                 ...cardStyle,
@@ -110,11 +106,7 @@ export default function Testimonials() {
                 }}
               >
                 <div style={nameStyle}>{t.name}</div>
-                <div style={locationStyle}>
-                  {t.location
-                    .replace("Sector", "Region")
-                    .replace("Planet", "City")}
-                </div>
+                <div style={locationStyle}>{t.location}</div>
               </div>
             </motion.div>
           ))}
