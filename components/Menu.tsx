@@ -127,7 +127,7 @@ function MenuExhibitionCard({ item, onAdd }: { item: any; onAdd: () => void }) {
           unoptimized
         />
 
-        {/* Hover Details Overlay */}
+        {/* Hover Quote Overlay */}
         <div
           style={{
             ...hoverOverlayStyle,
@@ -135,9 +135,6 @@ function MenuExhibitionCard({ item, onAdd }: { item: any; onAdd: () => void }) {
           }}
         >
           <div style={overlayQuote}>“FRESH & HOT.”</div>
-          <button onClick={handleAdd} style={addButtonStyle(added)}>
-            {added ? "✓ ADDED" : "ADD TO CART"}
-          </button>
         </div>
 
         {/* Technical Label - Bottom Left */}
@@ -162,6 +159,11 @@ function MenuExhibitionCard({ item, onAdd }: { item: any; onAdd: () => void }) {
           <h3 style={nameStyle}>{item.name.toUpperCase()}</h3>
         </div>
         <p style={descStyle}>{item.description}</p>
+        <div style={{ marginTop: "1.5rem" }}>
+          <button onClick={handleAdd} style={addButtonStyle(added)}>
+            {added ? "✓ ADDED" : "ADD TO CART"}
+          </button>
+        </div>
       </div>
     </motion.div>
   );
@@ -233,7 +235,7 @@ const catButtonStyle = (active: boolean): React.CSSProperties => ({
 
 const gridStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 400px), 1fr))",
+  gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
   gap: "clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 4rem)",
 };
 
