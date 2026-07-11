@@ -1,20 +1,25 @@
-@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Righteous&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Righteous&family=DM+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=Anton&display=swap");
 
 @import "tailwindcss";
 
 :root {
-  --black: #000000;
-  --white: #ffffff;
-  --red: #ff3c3c;
-  --orange: #ffb830;
-  --rainbow: linear-gradient(
-    90deg,
-    #ff3c3c,
-    #ffb830,
-    #22ff77,
-    #3c9eff,
-    #c03cff
-  );
+  --bg: #fff8f0;
+  --bg-alt: #fffdf5;
+  --card: #ffffff;
+  --text: #2d2d2d;
+  --text-muted: #6b6b6b;
+  --text-light: #999999;
+  --red: #e63946;
+  --red-dark: #c1121f;
+  --orange: #f4a261;
+  --orange-dark: #e76f51;
+  --yellow: #ffd166;
+  --green: #2a9d8f;
+  --cream: #fff8e7;
+  --warm: #ffedd5;
+  --border: #e8e0d8;
+  --border-light: #f0ece6;
+  --shadow: rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -28,13 +33,13 @@ html {
 }
 
 body {
-  background: #000;
-  color: #fff;
+  background: var(--bg);
+  color: var(--text);
   font-family: "DM Sans", sans-serif;
   overflow-x: hidden;
 }
 
-/* Film grain overlay */
+/* Subtle warm pattern */
 body::before {
   content: "";
   position: fixed;
@@ -43,60 +48,79 @@ body::before {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 9999;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 128px 128px;
+  z-index: -1;
+  background-image: radial-gradient(
+      circle at 10% 20%,
+      rgba(244, 162, 97, 0.04) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(230, 57, 70, 0.03) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 209, 102, 0.03) 0%,
+      transparent 70%
+    );
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
 
-@keyframes sweep-shimmer {
-  0% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.08;
-  }
-  100% {
-    transform: translateX(100%);
-    opacity: 0;
-  }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg); }
+  75% { transform: rotate(2deg); }
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: #000;
-}
-::-webkit-scrollbar-thumb {
-  background: #ff3c3c;
-  border-radius: 2px;
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+::selection { background: var(--orange); color: #fff; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Menu-inspired decorations */
+.menu-stamp {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 2px solid var(--red);
+  color: var(--red);
+  font-family: "Space Mono", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  transform: rotate(-4deg);
 }
 
-/* Selection */
-::selection {
-  background: #ff3c3c;
-  color: #fff;
+.menu-dashed {
+  border-top: 2px dashed var(--border);
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Receipt-style elements */
+.receipt-dash {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--border) 0px,
+    var(--border) 8px,
+    transparent 8px,
+    transparent 12px
+  );
+  height: 2px;
 }
-
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-

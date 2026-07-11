@@ -7,6 +7,8 @@ export interface CartItem {
   quantity: number;
   size?: string;
   crust?: string;
+  toppings?: string[];
+  notes?: string;
 }
 
 interface CartStore {

@@ -2,21 +2,21 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/lib/store";
-import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const allLinks = [
-  { label: "HOME", href: "#hero" },
-  { label: "MENU", href: "#menu" },
-  { label: "OUR STORY", href: "#about" },
-  { label: "ORDER NOW", href: "#order" },
+  { label: "🍕 Menu", href: "/menu" },
+  { label: "📖 Story", href: "/about" },
+  { label: "✨ Order", href: "/order" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [activeLink, setActiveLink] = useState("HOME");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const itemCount = useCartStore((s) => s.itemCount());
   const toggleCart = useCartStore((s) => s.toggleCart);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -24,323 +24,119 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNavClick = (label: string, href: string) => {
-    setActiveLink(label);
-    setMobileMenuOpen(false);
-    const id = href.replace("#", "");
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
+  const isHome = pathname === "/";
 
   return (
     <>
-      <nav
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          background:
-            scrolled || mobileMenuOpen ? "rgba(0,0,0,0.95)" : "transparent",
-          borderBottom: scrolled
-            ? "1px solid rgba(255,255,255,0.1)"
-            : "1px solid transparent",
-          padding: "0 clamp(1rem, 4vw, 3rem)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
-      >
-        {/* MOBILE LEFT: HAMBURGER */}
-        <div className="mobile-only" style={{ display: "none", flex: 1 }}>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{
-              background: "none",
-              border: "none",
-              padding: "10px",
-              cursor: "pointer",
-            }}
-          >
-            <div
-              style={{
-                width: "28px",
-                height: "2px",
-                background: "#fff",
-                marginBottom: "8px",
-                transform: mobileMenuOpen
-                  ? "rotate(45deg) translate(6px, 6px)"
-                  : "none",
-                transition: "0.3s",
-              }}
-            />
-            <div
-              style={{
-                width: "28px",
-                height: "2px",
-                background: "#fff",
-                marginBottom: "8px",
-                opacity: mobileMenuOpen ? 0 : 1,
-                transition: "0.3s",
-              }}
-            />
-            <div
-              style={{
-                width: "28px",
-                height: "2px",
-                background: "#fff",
-                transform: mobileMenuOpen
-                  ? "rotate(-45deg) translate(5px, -6px)"
-                  : "none",
-                transition: "0.3s",
-              }}
-            />
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
+        background: scrolled || mobileMenuOpen ? "rgba(255,248,240,0.98)" : "transparent",
+        borderBottom: scrolled ? "1px solid #e8e0d8" : "1px solid transparent",
+        padding: "0 clamp(1rem, 4vw, 3rem)", display: "flex", alignItems: "center",
+        justifyContent: "space-between", transition: "all 0.3s", height: "72px",
+      }}>
+        {/* Mobile hamburger */}
+        <div className="mobile-only" style={{ display: "none" }}>
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{ background: "none", border: "none", padding: "10px", cursor: "pointer" }}>
+            <div style={{ width: "24px", height: "2px", background: "#2d2d2d", marginBottom: "6px", transition: "0.3s",
+              transform: mobileMenuOpen ? "rotate(45deg) translate(5px, 5px)" : "none" }} />
+            <div style={{ width: "24px", height: "2px", background: "#2d2d2d", marginBottom: "6px", opacity: mobileMenuOpen ? 0 : 1, transition: "0.3s" }} />
+            <div style={{ width: "24px", height: "2px", background: "#2d2d2d", transition: "0.3s",
+              transform: mobileMenuOpen ? "rotate(-45deg) translate(5px, -5px)" : "none" }} />
           </button>
         </div>
 
-        {/* DESKTOP LEFT: LINKS */}
-        <div className="desktop-only" style={{ flex: 1 }}>
-          <ul
-            style={{
-              display: "flex",
-              gap: "3rem",
-              listStyle: "none",
-              margin: 0,
-              padding: 0,
-            }}
-          >
-            {allLinks.slice(0, 2).map(({ label, href }) => (
-              <li key={label}>
-                <button
-                  onClick={() => handleNavClick(label, href)}
-                  style={navButtonStyle(activeLink === label)}
-                >
-                  {label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* CENTER: LOGO */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "1.5rem",
-            cursor: "pointer",
-            justifyContent: "center",
-          }}
-          onClick={() => handleNavClick("HOME", "#hero")}
-        >
-          <span className="desktop-only" style={logoTextStyle}>
-            PIZZA
+        {/* Left: Logo */}
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.8rem", textDecoration: "none" }}>
+          <div style={{
+            width: "36px", height: "36px", borderRadius: "50%", background: "#e63946",
+            display: "flex", alignItems: "center", justifyContent: "center", color: "#fff",
+            fontFamily: "Righteous, sans-serif", fontSize: "1.2rem",
+          }}>P</div>
+          <span style={{ fontFamily: "Righteous, sans-serif", fontSize: "1.3rem", color: "#2d2d2d", letterSpacing: "0.02em" }}>
+            Pizza<span style={{ color: "#e63946" }}>Planet</span>
           </span>
-          <Image
-            src="/logo/logo.jpg"
-            alt="Logo"
-            height={100}
-            width={100}
-            style={{ objectFit: "cover" }}
-            priority
-          />
-          <span className="desktop-only" style={logoTextStyle}>
-            PLANET
-          </span>
+        </Link>
+
+        {/* Center: Nav links (desktop) */}
+        <div className="desktop-only" style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+          {allLinks.map(({ label, href }) => (
+            <Link key={href} href={href} style={{
+              fontFamily: "Space Mono, monospace", fontSize: "0.8rem", letterSpacing: "0.15em",
+              color: pathname === href ? "#e63946" : "#6b6b6b", textDecoration: "none",
+              padding: "8px 0", transition: "color 0.2s", position: "relative",
+            }}>
+              {label}
+              {pathname === href && (
+                <motion.div layoutId="nav-active" style={{
+                  position: "absolute", bottom: 0, left: 0, right: 0, height: "2px",
+                  background: "#e63946", borderRadius: "1px",
+                }} />
+              )}
+            </Link>
+          ))}
         </div>
 
-        {/* DESKTOP RIGHT: LINKS */}
-        <div
-          className="desktop-only"
-          style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
-        >
-          <ul
+        {/* Right: Actions */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          {isHome && (
+            <style>{`
+              @media (min-width: 1025px) { .home-only { display: flex !important; } }
+            `}</style>
+          )}
+          <motion.button onClick={toggleCart}
+            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             style={{
-              display: "flex",
-              gap: "3rem",
-              listStyle: "none",
-              margin: 0,
-              padding: 0,
-            }}
-          >
-            {allLinks.slice(2).map(({ label, href }) => (
-              <li key={label}>
-                <button
-                  onClick={() => handleNavClick(label, href)}
-                  style={navButtonStyle(activeLink === label)}
-                >
-                  {label}
-                </button>
-              </li>
-            ))}
-          </ul>
+              background: "none", border: "1px solid #e8e0d8", borderRadius: "50%",
+              width: "40px", height: "40px", display: "flex", alignItems: "center",
+              justifyContent: "center", cursor: "pointer", position: "relative",
+            }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2d2d2d" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+              <path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            {itemCount > 0 && (
+              <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
+                style={{
+                  position: "absolute", top: "-4px", right: "-4px", background: "#e63946",
+                  width: "18px", height: "18px", borderRadius: "50%", display: "flex",
+                  alignItems: "center", justifyContent: "center", fontSize: "0.55rem",
+                  color: "#fff", fontFamily: "Space Mono, monospace", fontWeight: 700,
+                }}>
+                {itemCount}
+              </motion.span>
+            )}
+          </motion.button>
         </div>
 
-        {/* MOBILE RIGHT CLEARANCE */}
-        <div className="mobile-only" style={{ display: "none", flex: 1 }} />
-
-        {/* MOBILE OVERLAY */}
+        {/* Mobile overlay */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              style={mobileOverlayStyle}
-            >
-              {allLinks.map(({ label, href }) => (
-                <button
-                  key={label}
-                  onClick={() => handleNavClick(label, href)}
-                  style={mobileLinkStyle}
-                >
+            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+              style={{
+                position: "fixed", top: "72px", left: 0, width: "100%", bottom: 0,
+                background: "#fff8f0", padding: "3rem 2rem", display: "flex", flexDirection: "column", gap: "2rem", zIndex: 999,
+              }}>
+              {[{ label: "🏠 Home", href: "/" }, ...allLinks].map(({ label, href }) => (
+                <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    fontFamily: "Righteous, sans-serif", fontSize: "2rem", color: "#2d2d2d",
+                    textDecoration: "none", letterSpacing: "-0.02em", cursor: "pointer",
+                  }}>
                   {label}
-                </button>
+                </Link>
               ))}
             </motion.div>
           )}
         </AnimatePresence>
 
         <style jsx global>{`
-          @media (max-width: 1024px) {
-            .desktop-only {
-              display: none !important;
-            }
-            .mobile-only {
-              display: block !important;
-            }
-          }
+          @media (max-width: 1024px) { .desktop-only { display: none !important; } }
+          @media (min-width: 1025px) { .mobile-only { display: none !important; } }
         `}</style>
       </nav>
-
-      {/* FLOATING CART BUTTON */}
-      <motion.button
-        onClick={toggleCart}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        style={floatingCartStyle}
-      >
-        <div style={{ position: "relative" }}>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#000"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-            <path d="M3 6h18" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
-          </svg>
-          <AnimatePresence>
-            {itemCount > 0 && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                style={floatingBadgeStyle}
-              >
-                {itemCount}
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.button>
     </>
   );
 }
-
-const navButtonStyle = (active: boolean): React.CSSProperties => ({
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  fontFamily: "Space Mono, monospace",
-  fontSize: "0.75rem",
-  letterSpacing: "0.3rem",
-  color: active ? "#FFB830" : "rgba(255,255,255,0.7)",
-  padding: "12px 0",
-  transition: "color 0.2s",
-  borderRadius: "0px",
-});
-
-const logoTextStyle: React.CSSProperties = {
-  fontFamily: "Righteous, sans-serif",
-  fontSize: "1.5rem",
-  color: "#fff",
-  letterSpacing: "0.1em",
-};
-
-const logoWrapperStyle: React.CSSProperties = {
-  position: "relative",
-  width: "72px",
-  height: "72px",
-  borderRadius: "50%",
-  overflow: "hidden",
-  border: "2px solid rgba(255,255,255,0.2)",
-};
-
-const floatingCartStyle: React.CSSProperties = {
-  position: "fixed",
-  top: "120px",
-  right: "clamp(1rem, 4vw, 3rem)",
-  zIndex: 1100,
-  background: "#FFB830",
-  width: "64px",
-  height: "64px",
-  border: "none",
-  borderRadius: "0px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  boxShadow: "0 10px 40px rgba(0,0,0,0.4)",
-};
-
-const floatingBadgeStyle: React.CSSProperties = {
-  position: "absolute",
-  top: "-12px",
-  right: "-12px",
-  background: "#FF3C3C",
-  width: "24px",
-  height: "24px",
-  borderRadius: "50%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: "0.7rem",
-  color: "#fff",
-  fontFamily: "Space Mono, monospace",
-  fontWeight: 700,
-  border: "2px solid #FFB830",
-};
-
-const mobileOverlayStyle: React.CSSProperties = {
-  position: "fixed",
-  top: "100px",
-  left: 0,
-  width: "100%",
-  bottom: 0,
-  background: "#000",
-  padding: "10vh 2.5rem",
-  display: "flex",
-  flexDirection: "column",
-  gap: "3rem",
-  zIndex: 999,
-};
-
-const mobileLinkStyle: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  color: "#fff",
-  fontSize: "3.5rem",
-  fontFamily: "Righteous, sans-serif",
-  textAlign: "left",
-  padding: 0,
-  letterSpacing: "-0.02em",
-};

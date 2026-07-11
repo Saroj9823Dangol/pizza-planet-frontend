@@ -3,142 +3,60 @@ import { motion } from "framer-motion";
 import { todaysSpecials } from "@/lib/data";
 
 export default function TodaysSpecial() {
-  const repeated = [
-    ...todaysSpecials,
-    ...todaysSpecials,
-    ...todaysSpecials,
-    ...todaysSpecials,
-  ];
-
   return (
-    <section
-      style={{
-        background: "#000",
-        padding: "clamp(3rem, 6vw, 5rem) 0",
-        position: "relative",
-        overflow: "hidden",
-        borderTop: "1px solid rgba(255,255,255,0.05)",
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
-      }}
-    >
-      {/* Section heading */}
-      <div
-        style={{
-          padding: "0 clamp(1rem, 5vw, 5rem)",
-          marginBottom: "clamp(2rem, 4vw, 3rem)",
-        }}
-      >
-        <div
-          style={{
-            fontFamily: "Space Mono, monospace",
-            fontSize: "0.65rem",
-            letterSpacing: "0.3em",
-            color: "rgba(255,255,255,0.5)",
-            marginBottom: "0.4rem",
-          }}
-        >
-          TODAY&apos;S
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            flexWrap: "wrap",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "Righteous, sans-serif",
-              fontSize: "clamp(2rem, 6vw, 6rem)",
-              color: "#fff",
-              lineHeight: 0.9,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            SPECIAL
-          </span>
-          <span
-            style={{
-              fontSize: "clamp(1.5rem, 3vw, 3rem)",
-              color: "#FFB830",
-            }}
-          >
-            ✦
-          </span>
-        </div>
+    <section style={{
+      background: "linear-gradient(135deg, #fff8f0 0%, #ffedd5 50%, #fffdf5 100%)",
+      padding: "clamp(3rem, 6vw, 6rem) clamp(1rem, 5vw, 5rem)",
+      position: "relative", overflow: "hidden",
+      borderTop: "2px solid #e8e0d8", borderBottom: "2px solid #e8e0d8",
+    }}>
+      {/* Decorative background */}
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.04 }}>
+        <span style={{ position: "absolute", top: "20%", right: "10%", fontFamily: "Righteous, sans-serif", fontSize: "4rem", color: "#e63946", transform: "rotate(5deg)" }}>⭐</span>
+        <span style={{ position: "absolute", bottom: "10%", left: "5%", fontFamily: "Pacifico, cursive", fontSize: "2rem", color: "#f4a261", transform: "rotate(-3deg)" }}>Limited Time!</span>
       </div>
 
-      {/* Scrolling strip */}
-      <div style={{ overflow: "hidden", whiteSpace: "nowrap" }}>
-        <motion.div
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          style={{ display: "inline-flex", alignItems: "center" }}
-        >
-          {repeated.map((item, i) => (
-            <SpecialItem key={i} name={item.name} price={item.price} />
-          ))}
+      <div style={{ maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          style={{ textAlign: "center", marginBottom: "clamp(2.5rem, 5vw, 4rem)" }}>
+          <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#e63946", marginBottom: "0.5rem" }}>~ TODAY&apos;S ~</div>
+          <h2 style={{ fontFamily: "Righteous, sans-serif", fontSize: "clamp(2rem, 6vw, 4rem)", color: "#2d2d2d", lineHeight: 1, margin: 0, letterSpacing: "-0.03em" }}>
+            SPECIALS
+          </h2>
+          <p style={{ fontFamily: "Space Mono, monospace", fontSize: "0.6rem", color: "#999", letterSpacing: "0.12em", marginTop: "0.8rem" }}>
+            ──  Fresh off the planet, made just for you  ──
+          </p>
         </motion.div>
+
+        {/* Specials Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
+          {todaysSpecials.map((item, i) => (
+            <motion.div key={item.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
+              style={{
+                background: "#fff", border: "1px solid #e8e0d8", padding: "clamp(1.5rem, 3vw, 2rem)",
+                textAlign: "center", position: "relative", overflow: "hidden",
+              }}>
+              {/* Corner accent */}
+              <div style={{ position: "absolute", top: 0, right: 0, width: 0, height: 0, borderStyle: "solid", borderWidth: "0 40px 40px 0", borderColor: "transparent #e63946 transparent transparent" }} />
+              <span style={{ position: "absolute", top: "3px", right: "3px", fontSize: "0.55rem", color: "#fff", fontFamily: "Space Mono, monospace", letterSpacing: "0.05em", transform: "rotate(45deg)" }}>HOT</span>
+
+              <div style={{ fontFamily: "Righteous, sans-serif", fontSize: "clamp(1.3rem, 2.8vw, 1.7rem)", color: "#2d2d2d", marginBottom: "0.5rem", lineHeight: 1.2 }}>
+                {item.name}
+              </div>
+
+              <div style={{ fontFamily: "Righteous, sans-serif", fontSize: "clamp(1.6rem, 3.5vw, 2rem)", color: "#f4a261", marginBottom: "1rem" }}>
+                Rs. {item.price}
+              </div>
+
+              <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#e63946", border: "2px solid #e63946", display: "inline-block", padding: "3px 14px", transform: "rotate(-2deg)" }}>
+                ★ LIMITED
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
-  );
-}
-
-function SpecialItem({ name, price }: { name: string; price: number }) {
-  return (
-    <div
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "clamp(1rem, 2vw, 2rem)",
-        padding: "0 clamp(1.5rem, 4vw, 4rem)",
-        borderRight: "1px solid rgba(255,255,255,0.08)",
-      }}
-    >
-      <span
-        style={{
-          fontFamily: "Righteous, sans-serif",
-          fontSize: "clamp(1.2rem, 3vw, 3rem)",
-          color: "#fff",
-          letterSpacing: "-0.01em",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {name}
-      </span>
-      <span
-        style={{
-          fontFamily: "Space Mono, monospace",
-          fontSize: "clamp(1rem, 2vw, 1.8rem)",
-          color: "#FFB830",
-          whiteSpace: "nowrap",
-        }}
-      >
-        Rs. {price.toLocaleString()}
-      </span>
-      <div
-        style={{
-          position: "relative",
-          transform: "rotate(-8deg)",
-          flexShrink: 0,
-        }}
-      >
-        <span
-          style={{
-            display: "block",
-            fontFamily: "Space Mono, monospace",
-            fontSize: "clamp(0.5rem, 0.8vw, 0.6rem)",
-            letterSpacing: "0.15em",
-            color: "#FF3C3C",
-            border: "2px solid #FF3C3C",
-            padding: "2px 6px",
-            whiteSpace: "nowrap",
-          }}
-        >
-          LIMITED
-        </span>
-      </div>
-    </div>
   );
 }

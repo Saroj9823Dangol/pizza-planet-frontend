@@ -1,453 +1,219 @@
 "use client";
 import { useCartStore } from "@/lib/store";
-import Image from "next/image";
-import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCartStore();
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  const [placed, setPlaced] = useState(false);
+  const [customer, setCustomer] = useState({ name: "", phone: "", email: "" });
+  const [deliveryType, setDeliveryType] = useState<"PICKUP" | "DELIVERY">("PICKUP");
+  const [address, setAddress] = useState("");
+  const [notes, setNotes] = useState("");
 
   const handlePlaceOrder = () => {
-    alert("Thank you! Your order has been placed successfully.");
-    clearCart();
-    router.push("/");
+    setPlaced(true);
+    setTimeout(() => { clearCart(); router.push("/"); }, 2500);
+  };
+
+  if (items.length === 0 && !placed) {
+    return (
+      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem", background: "#fff8f0", color: "#2d2d2d", padding: "2rem" }}>
+        <div style={{ fontSize: "4rem" }}>🍕</div>
+        <h1 style={{ fontFamily: "Righteous, sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", textAlign: "center" }}>YOUR TRAY IS EMPTY</h1>
+        <p style={{ fontFamily: "DM Sans, sans-serif", color: "#999", textAlign: "center", maxWidth: "400px" }}>
+          Add some delicious items from our menu first!
+        </p>
+        <motion.button whileHover={{ scale: 1.05 }} onClick={() => router.push("/menu")}
+          style={{ background: "#e63946", border: "none", color: "#fff", padding: "1.2rem 3rem", fontFamily: "Space Mono, monospace", fontSize: "0.9rem", fontWeight: 700, letterSpacing: "0.2em", cursor: "pointer" }}>
+          🍕 VIEW MENU
+        </motion.button>
+      </div>
+    );
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", background: "transparent", border: "none", borderBottom: "2px solid #e8e0d8",
+    padding: "0.8rem 0", color: "#2d2d2d", fontFamily: "Space Mono, monospace",
+    fontSize: "0.85rem", outline: "none",
   };
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#000",
-        color: "#fff",
-        padding: isMobile ? "80px 1rem 4rem" : "120px 1.5rem 8rem",
-      }}
-    >
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-        <Link
-          href="/"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            color: "rgba(255,255,255,0.4)",
-            textDecoration: "none",
-            fontFamily: "Space Mono, monospace",
-            fontSize: "0.7rem",
-            marginBottom: "3rem",
-            letterSpacing: "0.1em",
-          }}
-        >
-          ← RETURN TO SHOP
-        </Link>
+    <div style={{ minHeight: "100dvh", background: "#fff8f0", color: "#2d2d2d", padding: "clamp(1.5rem, 5vw, 4rem)" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        {/* Back + Header */}
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: "2.5rem" }}>
+          <button onClick={() => router.push("/")}
+            style={{ background: "none", border: "none", color: "#999", fontFamily: "Space Mono, monospace", fontSize: "0.65rem", cursor: "pointer", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            ← BACK
+          </button>
+          <h1 style={{ fontFamily: "Righteous, sans-serif", fontSize: "clamp(1.8rem, 6vw, 3rem)", color: "#2d2d2d", margin: 0, letterSpacing: "-0.02em" }}>CHECKOUT 🛒</h1>
+          <p style={{ fontFamily: "DM Sans, sans-serif", color: "#999", marginTop: "0.3rem", fontSize: "0.9rem" }}>Almost there! Fill in your details to confirm your order.</p>
+        </motion.div>
 
-        <div style={{ marginBottom: "4rem" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "1.5rem",
-              marginBottom: "1rem",
-            }}
-          >
-            <div
-              style={{
-                position: "relative",
-                width: "60px",
-                height: "60px",
-                borderRadius: "50%",
-                overflow: "hidden",
-              }}
-            >
-              <Image
-                src="/logo/logo.jpg"
-                alt="Logo"
-                fill
-                style={{ objectFit: "cover" }}
-              />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "2rem" }}>
+          {/* LEFT: Order Items + Details */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", fontFamily: "Space Mono, monospace", fontSize: "0.6rem", justifyContent: "center" }}>
+              <span style={{ padding: "0.3rem 0.8rem", borderRadius: "20px", background: "#e63946", color: "#fff", letterSpacing: "0.1em", fontWeight: 700 }}>📋 DETAILS</span>
+              <span style={{ color: "#ddd" }}>→</span>
+              <span style={{ padding: "0.3rem 0.8rem", borderRadius: "20px", background: "#e8e0d8", color: "#999", letterSpacing: "0.1em", fontWeight: 700 }}>💳 PAY</span>
             </div>
-            <h1
-              style={{
-                fontFamily: "Righteous, sans-serif",
-                fontSize: "clamp(2.5rem, 5vw, 4rem)",
-                margin: 0,
-              }}
-            >
-              Checkout
-            </h1>
-          </div>
-          <p
-            style={{
-              fontFamily: "DM Sans, sans-serif",
-              color: "rgba(255,255,255,0.4)",
-              fontSize: "0.9rem",
-            }}
-          >
-            Review your order and provide delivery details to complete your
-            journey.
-          </p>
-        </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1fr) 380px",
-            gap: isMobile ? "3rem" : "4rem",
-            alignItems: "start",
-          }}
-        >
-          {/* Main Section */}
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}
-          >
-            {/* Delivery Info */}
-            <section>
-              <h2 style={sectionHeaderStyle}>1. DELIVERY INFORMATION</h2>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-                  gap: "1.25rem",
-                }}
-              >
-                <div style={inputWrapper}>
-                  <label style={labelStyle}>FIRST NAME</label>
-                  <input placeholder="Aarav" style={inputStyle} />
-                </div>
-                <div style={inputWrapper}>
-                  <label style={labelStyle}>LAST NAME</label>
-                  <input placeholder="Shrestha" style={inputStyle} />
-                </div>
-                <div
-                  style={{
-                    ...inputWrapper,
-                    gridColumn: isMobile ? "auto" : "span 2",
-                  }}
-                >
-                  <label style={labelStyle}>EMAIL ADDRESS</label>
-                  <input placeholder="aarav@example.com" style={inputStyle} />
-                </div>
-                <div
-                  style={{
-                    ...inputWrapper,
-                    gridColumn: isMobile ? "auto" : "span 2",
-                  }}
-                >
-                  <label style={labelStyle}>PHONE NUMBER</label>
-                  <input placeholder="98XXXXXXXX" style={inputStyle} />
-                </div>
-                <div
-                  style={{
-                    ...inputWrapper,
-                    gridColumn: isMobile ? "auto" : "span 2",
-                  }}
-                >
-                  <label style={labelStyle}>STREET ADDRESS</label>
-                  <input
-                    placeholder="New Baneshwor, Kathmandu"
-                    style={inputStyle}
-                  />
-                </div>
-                <div style={inputWrapper}>
-                  <label style={labelStyle}>CITY</label>
-                  <input placeholder="Kathmandu" style={inputStyle} />
-                </div>
-                <div style={inputWrapper}>
-                  <label style={labelStyle}>NEAREST LANDMARK</label>
-                  <input placeholder="Near Civil Hospital" style={inputStyle} />
-                </div>
-              </div>
-            </section>
-
-            {/* Payment Method */}
-            <section>
-              <h2 style={sectionHeaderStyle}>2. PAYMENT METHOD</h2>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                }}
-              >
-                <label style={radioContainerStyle}>
-                  <input type="radio" name="payment" defaultChecked />
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span>Cash on Delivery</span>
-                    <span style={{ fontSize: "0.65rem", opacity: 0.5 }}>
-                      PAY AT YOUR DOOR
-                    </span>
-                  </div>
-                </label>
-                <label style={radioContainerStyle}>
-                  <input type="radio" name="payment" />
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span>QR Scan / Fonepay</span>
-                    <span style={{ fontSize: "0.65rem", opacity: 0.5 }}>
-                      SCAN ON DELIVERY
-                    </span>
-                  </div>
-                </label>
-                <label style={radioContainerStyle}>
-                  <input type="radio" name="payment" disabled />
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span style={{ opacity: 0.5 }}>eSewa / Khalti</span>
-                    <span style={{ fontSize: "0.55rem", color: "#FF3C3C" }}>
-                      COMING SOON
-                    </span>
-                  </div>
-                </label>
-              </div>
-            </section>
-
-            <button
-              onClick={handlePlaceOrder}
-              disabled={items.length === 0}
-              style={{
-                background: items.length === 0 ? "#222" : "#FF3C3C",
-                color: items.length === 0 ? "#444" : "#fff",
-                border: "none",
-                padding: "1.25rem",
-                fontFamily: "Space Mono, monospace",
-                fontSize: "0.85rem",
-                letterSpacing: "0.25em",
-                cursor: items.length === 0 ? "not-allowed" : "pointer",
-                transition: "all 0.3s",
-                marginTop: "1rem",
-              }}
-            >
-              CONFIRM ORDER
-            </button>
-          </div>
-
-          {/* Sidebar / Order Summary */}
-          <aside
-            style={{
-              background: "#0a0a0a",
-              padding: isMobile ? "1.5rem" : "2.5rem",
-              border: "1px solid rgba(255,184,48,0.1)",
-              position: isMobile ? "static" : "sticky",
-              top: "100px",
-            }}
-          >
-            <h3
-              style={{
-                fontFamily: "Righteous, sans-serif",
-                fontSize: "1.2rem",
-                color: "#FFB830",
-                marginBottom: "2rem",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-                paddingBottom: "1rem",
-              }}
-            >
-              ORDER SUMMARY
-            </h3>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "1.5rem",
-                marginBottom: "2.5rem",
-              }}
-            >
-              {items.length === 0 ? (
-                <div
-                  style={{
-                    color: "rgba(255,255,255,0.2)",
-                    fontSize: "0.75rem",
-                    textAlign: "center",
-                    padding: "2rem 0",
-                  }}
-                >
-                  YOUR CART IS EMPTY
-                </div>
-              ) : (
-                items.map((item) => (
-                  <div
-                    key={item.id}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                    }}
-                  >
+            {/* Order Items */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              style={{ background: "#fff", border: "1px solid #e8e0d8", padding: "1.5rem" }}>
+              <h2 style={{ fontFamily: "Space Mono, monospace", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#f4a261", marginBottom: "1.2rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span>🧾</span> ORDER ITEMS ({items.length})
+              </h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {items.map((item) => (
+                  <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", paddingBottom: "0.8rem", borderBottom: "1px solid #f0ece6" }}>
                     <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          fontFamily: "DM Sans, sans-serif",
-                          fontSize: "0.85rem",
-                          fontWeight: 500,
-                          color: "#fff",
-                        }}
-                      >
+                      <div style={{ fontFamily: "Righteous, sans-serif", color: "#2d2d2d", fontSize: "1rem" }}>
                         {item.name}
+                        {item.size && <span style={{ color: "#f4a261", fontSize: "0.8rem", marginLeft: "0.4rem" }}>({item.size})</span>}
                       </div>
-                      <div
-                        style={{
-                          fontFamily: "Space Mono, monospace",
-                          fontSize: "0.65rem",
-                          color: "rgba(255,255,255,0.4)",
-                          marginTop: "4px",
-                        }}
-                      >
-                        QTY: {item.quantity} · {item.size || "Standard"}
+                      {item.toppings && item.toppings.length > 0 && (
+                        <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.55rem", color: "#bbb", marginTop: "3px" }}>
+                          + {item.toppings.join(" · ")}
+                        </div>
+                      )}
+                      <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.55rem", color: "#999", marginTop: "2px" }}>
+                        QTY: {item.quantity} × Rs. {item.price.toLocaleString()}
                       </div>
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "Righteous, sans-serif",
-                        fontSize: "0.9rem",
-                        color: "#fff",
-                      }}
-                    >
+                    <div style={{ fontFamily: "Righteous, sans-serif", fontSize: "1rem", color: "#f4a261", whiteSpace: "nowrap", marginLeft: "1rem" }}>
                       Rs. {(item.price * item.quantity).toLocaleString()}
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "1rem",
-                borderTop: "1px solid rgba(255,255,255,0.06)",
-                paddingTop: "1.5rem",
-              }}
-            >
-              <div style={summaryRowStyle}>
-                <span>Subtotal</span>
-                <span>Rs. {total().toLocaleString()}</span>
-              </div>
-              <div style={summaryRowStyle}>
-                <span>Delivery Fee</span>
-                <span>{total() > 1500 ? "FREE" : "Rs. 100"}</span>
-              </div>
-              <div
-                style={{
-                  ...summaryRowStyle,
-                  marginTop: "1rem",
-                  paddingTop: "1rem",
-                  borderTop: "1px dashed rgba(255,255,255,0.1)",
-                }}
-              >
-                <span style={{ color: "#fff", fontWeight: 700 }}>TOTAL</span>
-                <span
-                  style={{
-                    fontFamily: "Righteous, sans-serif",
-                    fontSize: "1.8rem",
-                    color: "#FFB830",
-                  }}
-                >
-                  Rs.{" "}
-                  {(
-                    total() + (total() > 1500 || total() === 0 ? 0 : 100)
-                  ).toLocaleString()}
+              {/* Total */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1.2rem", marginTop: "0.5rem", borderTop: "2px dashed #e8e0d8" }}>
+                <span style={{ fontFamily: "Space Mono, monospace", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#999" }}>TOTAL</span>
+                <span style={{ fontFamily: "Righteous, sans-serif", fontSize: "clamp(1.5rem, 4vw, 2.2rem)", color: "#f4a261", lineHeight: 1 }}>
+                  Rs. {total().toLocaleString()}
                 </span>
               </div>
-            </div>
+            </motion.div>
 
-            <p
-              style={{
-                fontSize: "0.65rem",
-                color: "rgba(255,255,255,0.2)",
-                marginTop: "2rem",
-                textAlign: "center",
-                lineHeight: 1.6,
-              }}
-            >
-              BY PLACING AN ORDER, YOU AGREE TO PIZZA PLANET&apos;S TERMS OF
-              SERVICE AND PRIVACY POLICY.
-            </p>
-          </aside>
+            {/* Customer Details */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+              style={{ background: "#fff", border: "1px solid #e8e0d8", padding: "1.5rem" }}>
+              <h2 style={{ fontFamily: "Space Mono, monospace", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#f4a261", marginBottom: "1.2rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span>📋</span> YOUR DETAILS
+              </h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.2rem" }}>
+                  <div>
+                    <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.5rem", letterSpacing: "0.15em", color: "#e63946", marginBottom: "0.3rem" }}>YOUR NAME *</div>
+                    <input type="text" required value={customer.name} onChange={(e) => setCustomer({ ...customer, name: e.target.value })} placeholder="ENTER NAME" style={inputStyle} />
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.5rem", letterSpacing: "0.15em", color: "#e63946", marginBottom: "0.3rem" }}>PHONE *</div>
+                    <input type="tel" required value={customer.phone} onChange={(e) => setCustomer({ ...customer, phone: e.target.value })} placeholder="+977" style={inputStyle} />
+                  </div>
+                </div>
+
+                {/* Delivery/Pickup */}
+                <div>
+                  <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.5rem", letterSpacing: "0.15em", color: "#e63946", marginBottom: "0.6rem" }}>PREFERENCE</div>
+                  <div style={{ display: "flex", gap: "1px", background: "#e8e0d8", border: "1px solid #e8e0d8", width: "fit-content" }}>
+                    <button onClick={() => setDeliveryType("PICKUP")}
+                      style={{ background: deliveryType === "PICKUP" ? "#f4a261" : "#fff", color: deliveryType === "PICKUP" ? "#fff" : "#999", border: "none", padding: "0.7rem 1.5rem", fontFamily: "Space Mono, monospace", fontSize: "0.7rem", cursor: "pointer", fontWeight: 700, letterSpacing: "0.1em", transition: "all 0.2s" }}>
+                      🏪 PICKUP
+                    </button>
+                    <button onClick={() => setDeliveryType("DELIVERY")}
+                      style={{ background: deliveryType === "DELIVERY" ? "#f4a261" : "#fff", color: deliveryType === "DELIVERY" ? "#fff" : "#999", border: "none", padding: "0.7rem 1.5rem", fontFamily: "Space Mono, monospace", fontSize: "0.7rem", cursor: "pointer", fontWeight: 700, letterSpacing: "0.1em", transition: "all 0.2s" }}>
+                      🚚 DELIVERY
+                    </button>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {deliveryType === "DELIVERY" && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
+                      <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.5rem", letterSpacing: "0.15em", color: "#e63946", marginBottom: "0.3rem" }}>DELIVERY ADDRESS *</div>
+                      <input type="text" required value={address} onChange={(e) => setAddress(e.target.value)} placeholder="STREET, CITY..." style={inputStyle} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Email */}
+                <div>
+                  <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.5rem", letterSpacing: "0.15em", color: "#e63946", marginBottom: "0.3rem" }}>EMAIL (FOR RECEIPT)</div>
+                  <input type="email" value={customer.email} onChange={(e) => setCustomer({ ...customer, email: e.target.value })} placeholder="OPTIONAL" style={inputStyle} />
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.5rem", letterSpacing: "0.15em", color: "#e63946", marginBottom: "0.3rem" }}>ORDER NOTES</div>
+                  <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
+                    placeholder="ALLERGIES, SPECIAL REQUESTS..."
+                    style={{ ...inputStyle, borderBottom: "2px solid #e8e0d8", resize: "vertical", minHeight: "60px", fontFamily: "DM Sans, sans-serif" }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Summary & Place Order */}
+          <div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+              style={{ position: "sticky", top: "100px", background: "#fff", border: "1px solid #e8e0d8", padding: "1.5rem" }}>
+              <div style={{ fontFamily: "Space Mono, monospace", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#f4a261", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                🧾 ORDER SUMMARY
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem", marginBottom: "1.5rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "Space Mono, monospace", fontSize: "0.6rem", color: "#999" }}>
+                  <span>ITEMS ({items.length})</span>
+                  <span>Rs. {total().toLocaleString()}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "Space Mono, monospace", fontSize: "0.6rem", color: "#999" }}>
+                  <span>{deliveryType === "PICKUP" ? "🏪 PICKUP" : "🚚 DELIVERY"}</span>
+                  <span>{deliveryType === "PICKUP" ? "FREE" : "Rs. 50"}</span>
+                </div>
+              </div>
+              <div style={{ borderTop: "2px dashed #e8e0d8", paddingTop: "1rem", marginBottom: "1.5rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                  <span style={{ fontFamily: "Space Mono, monospace", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#999" }}>TOTAL</span>
+                  <span style={{ fontFamily: "Righteous, sans-serif", fontSize: "clamp(1.5rem, 4vw, 2rem)", color: "#f4a261", lineHeight: 1 }}>
+                    Rs. {(total() + (deliveryType === "DELIVERY" ? 50 : 0)).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              <motion.button onClick={handlePlaceOrder} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                disabled={placed || !customer.name || !customer.phone}
+                style={{
+                  width: "100%", padding: "1.2rem",
+                  background: placed ? "#2a9d8f" : (!customer.name || !customer.phone) ? "#ddd" : "#e63946",
+                  color: "#fff", border: "none",
+                  fontFamily: "Space Mono, monospace", fontWeight: 700, letterSpacing: "0.2em",
+                  fontSize: "0.9rem", cursor: placed || !customer.name || !customer.phone ? "default" : "pointer",
+                  transition: "all 0.3s",
+                }}>
+                {placed
+                  ? "🎉 ORDER PLACED! 🎉"
+                  : (!customer.name || !customer.phone)
+                    ? "✏️ FILL YOUR DETAILS"
+                    : `🔥 PLACE ORDER — Rs. ${(total() + (deliveryType === "DELIVERY" ? 50 : 0)).toLocaleString()}`
+                }
+              </motion.button>
+
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+                style={{ textAlign: "center", marginTop: "1rem", fontFamily: "Space Mono, monospace", fontSize: "0.5rem", color: "#bbb", letterSpacing: "0.1em" }}>
+                🧀 YOUR ORDER WILL BE READY IN 20-30 MINUTES
+                {deliveryType === "DELIVERY" && <span> • DELIVERY FEE: Rs. 50</span>}
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
-
-const sectionHeaderStyle: React.CSSProperties = {
-  fontFamily: "Space Mono, monospace",
-  fontSize: "0.75rem",
-  letterSpacing: "0.25em",
-  color: "#FFB830",
-  marginBottom: "2rem",
-  borderBottom: "1px solid rgba(255,255,255,0.1)",
-  paddingBottom: "0.75rem",
-};
-
-const inputWrapper: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-};
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: "Space Mono, monospace",
-  fontSize: "0.6rem",
-  letterSpacing: "0.15em",
-  color: "rgba(255,255,255,0.4)",
-};
-
-const inputStyle: React.CSSProperties = {
-  background: "#0d0d0d",
-  border: "1px solid rgba(255,255,255,0.1)",
-  padding: "1rem",
-  color: "#fff",
-  fontFamily: "DM Sans, sans-serif",
-  fontSize: "0.9rem",
-  outline: "none",
-  transition: "border-color 0.2s",
-};
-
-const radioContainerStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: "12px",
-  background: "#0a0a0a",
-  padding: "1.25rem",
-  border: "1px solid rgba(255,255,255,0.06)",
-  cursor: "pointer",
-  fontFamily: "Space Mono, monospace",
-  fontSize: "0.75rem",
-  transition: "all 0.2s",
-};
-
-const summaryRowStyle: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  fontFamily: "DM Sans, sans-serif",
-  fontSize: "0.85rem",
-  color: "rgba(255,255,255,0.5)",
-};

@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -8,261 +9,112 @@ export default function Hero() {
       id="hero"
       style={{
         minHeight: "100dvh",
-        background: "#000",
+        background: "linear-gradient(180deg, #fff8f0 0%, #ffedd5 50%, #fff8f0 100%)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         padding: "100px clamp(1rem, 5dvw, 5rem) 0",
         position: "relative",
-        overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "clamp(2rem, 5vw, 4rem)",
-          alignItems: "center",
-          width: "100%",
-          maxWidth: "1400px",
-          margin: "0 auto",
-        }}
-      >
-        {/* LEFT: Heading + CTAs */}
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        gap: "clamp(2rem, 5vw, 4rem)", alignItems: "center",
+        width: "100%", maxWidth: "1200px", margin: "0 auto", position: "relative", zIndex: 1,
+      }}>
+        {/* LEFT: Content */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ zIndex: 2 }}
         >
-          {/* PIZZA */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            style={{ fontFamily: "Pacifico, cursive", fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)", color: "#e63946", marginBottom: "0.5rem" }}
+          >
+            Welcome to 🌟
+          </motion.div>
+
           <div>
-            <span
-              style={{
-                fontFamily: "Righteous, sans-serif",
-                fontSize: "clamp(35px, 12vw, 150px)",
-                color: "#fff",
-                display: "block",
-                lineHeight: 0.9,
-                letterSpacing: "-0.02em",
-                wordBreak: "break-word",
-              }}
-            >
-              PIZZA
-            </span>
+            <span style={{
+              fontFamily: "Righteous, sans-serif", fontSize: "clamp(3rem, 10vw, 6rem)",
+              color: "#2d2d2d", display: "block", lineHeight: 1, letterSpacing: "-0.02em",
+            }}>PIZZA</span>
           </div>
-
-          {/* PLANET */}
           <div style={{ marginBottom: "1rem" }}>
-            <span
-              style={{
-                fontFamily: "Righteous, sans-serif",
-                fontSize: "clamp(35px, 12vw, 150px)",
-                color: "#FFB830",
-                lineHeight: 0.9,
-                letterSpacing: "-0.02em",
-                display: "block",
-                wordBreak: "break-word",
-              }}
-            >
-              PLANET.
-            </span>
+            <span style={{
+              fontFamily: "Righteous, sans-serif", fontSize: "clamp(3rem, 10vw, 6rem)",
+              background: "linear-gradient(135deg, #f4a261, #e63946)", WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent", lineHeight: 1, letterSpacing: "-0.02em", display: "block",
+            }}>PLANET</span>
           </div>
 
-          {/* Curved tagline */}
-          <div
-            style={{
-              marginBottom: "2.5rem",
-              marginTop: "0.5rem",
-              maxWidth: "100%",
-            }}
-          >
-            <svg
-              viewBox="0 0 400 80"
-              width="100%"
-              style={{ maxWidth: "400px", overflow: "visible" }}
-            >
-              <defs>
-                <path id="curve" d="M 20 60 Q 200 0 380 60" />
-              </defs>
-              <text fontFamily="Pacifico, cursive" fontSize="24" fill="#FF3C3C">
-                <textPath href="#curve">I&apos;m Lovin&apos; It</textPath>
-              </text>
-            </svg>
-          </div>
+          <svg viewBox="0 0 400 40" width="100%" style={{ maxWidth: "380px", overflow: "visible", marginBottom: "1.5rem" }}>
+            <defs><path id="curve-hero" d="M 20 30 Q 200 0 380 30" /></defs>
+            <text fontFamily="Pacifico, cursive" fontSize="20" fill="#e63946">
+              <textPath href="#curve-hero" startOffset="50%" textAnchor="middle">
+                Planet of Cheeseness, Togetherness &amp; Happiness
+              </textPath>
+            </text>
+          </svg>
 
-          {/* <p
-            style={{
-              fontFamily: "Space Mono, monospace",
-              fontSize: "clamp(0.85rem, 1.2vw, 1rem)",
-              color: "rgba(255,255,255,0.6)",
-              maxWidth: "450px",
-              marginBottom: "3rem",
-              lineHeight: 1.6,
-              letterSpacing: "0.05em",
-            }}
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
+            style={{ fontFamily: "DM Sans, sans-serif", fontSize: "1.05rem", color: "#6b6b6b", maxWidth: "480px", marginBottom: "2rem", lineHeight: 1.6 }}
           >
-            Mastering the art of 48-hour slow fermentation and wood-fired
-            perfection. From our brick oven to your table.
-          </p> */}
+            A Slice of HAPPINESS awaits! Wood-fired pizzas, steam momos, crispy wings, and the best shakes in town — all made with love.
+          </motion.p>
 
-          {/* CTAs */}
-          <div
-            style={{
-              display: "flex",
-              gap: "1.5rem",
-              flexWrap: "wrap",
-              alignItems: "center",
-            }}
-          >
-            <a
-              href="#menu"
-              style={{
-                fontFamily: "Space Mono, monospace",
-                fontSize: "0.8rem",
-                letterSpacing: "0.15em",
-                color: "#fff",
-                textDecoration: "none",
-                borderBottom: "2px solid #FFB830",
-                paddingBottom: "4px",
-                display: "inline-block",
-                transition: "opacity 0.2s",
-              }}
-            >
-              VIEW MENU
-            </a>
-
-            <a
-              href="#order"
-              style={{
-                display: "inline-block",
-                padding: "1rem 2.5rem",
-                background: "#FF3C3C",
-                fontFamily: "Space Mono, monospace",
-                fontSize: "0.8rem",
-                letterSpacing: "0.15em",
-                color: "#fff",
-                textDecoration: "none",
-                borderRadius: "0px",
-                transition: "transform 0.2s",
-              }}
-            >
-              ORDER NOW →
-            </a>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
+            <Link href="/menu" style={{
+              display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.9rem 2.2rem",
+              background: "#e63946", fontFamily: "Space Mono, monospace", fontSize: "0.8rem",
+              letterSpacing: "0.12em", color: "#fff", textDecoration: "none", fontWeight: 700,
+            }}>
+              🍕 VIEW MENU
+            </Link>
+            <Link href="/order" style={{
+              display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.9rem 2.2rem",
+              background: "transparent", border: "2px solid #f4a261", color: "#f4a261",
+              fontFamily: "Space Mono, monospace", fontSize: "0.8rem", letterSpacing: "0.12em",
+              textDecoration: "none", fontWeight: 700,
+            }}>
+              ✨ ORDER NOW
+            </Link>
           </div>
         </motion.div>
 
-        {/* RIGHT: Real pizza photo + Logo Badge */}
+        {/* RIGHT: Pizza on wooden board */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          style={{
-            position: "relative",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-          }}
+          transition={{ duration: 1, delay: 0.3 }}
+          style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}
         >
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              maxWidth: "650px",
-              aspectRatio: "1/1",
-            }}
-          >
+          <div style={{ position: "relative", width: "100%", maxWidth: "480px", aspectRatio: "1/1" }}>
             <Image
-              src="/images/hero.png"
-              alt="Artisanal Hand-tossed Pizza"
+              src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=85"
+              alt="Fresh Pizza Planet Pizza on wooden board"
               fill
               style={{ objectFit: "contain" }}
               priority
+              unoptimized
             />
-
-            {/* Logo Badge overlay - ROUNDED */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "10%",
-                right: "10%",
-                width: "clamp(60px, 15vw, 120px)",
-                height: "clamp(60px, 15vw, 120px)",
-                borderRadius: "50%",
-                border: "2px solid #fff",
-                overflow: "hidden",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
-                zIndex: 10,
-              }}
-            >
-              <Image
-                src="/logo/logo.jpg"
-                alt="Pizza Planet Authentic"
-                fill
-                style={{ objectFit: "cover" }}
-              />
-            </div>
+            <div style={{
+              position: "absolute", top: "5%", left: "0", background: "#f4a261", color: "#fff",
+              padding: "5px 16px", fontFamily: "Space Mono, monospace", fontSize: "0.65rem",
+              fontWeight: 700, letterSpacing: "0.1em", transform: "rotate(-6deg)", whiteSpace: "nowrap",
+            }}>🏆 BEST IN TOWN</div>
+            <div style={{
+              position: "absolute", bottom: "15%", right: "5%", background: "#e63946", color: "#fff",
+              padding: "5px 16px", fontFamily: "Space Mono, monospace", fontSize: "0.65rem",
+              fontWeight: 700, letterSpacing: "0.1em", transform: "rotate(4deg)", whiteSpace: "nowrap",
+            }}>🔥 WOOD FIRED</div>
           </div>
         </motion.div>
       </div>
-
-      {/* Marquee strip */}
-      <MarqueeTicker />
     </section>
-  );
-}
-
-function MarqueeTicker() {
-  const text =
-    " 🪵 WOOD FIRED · 🍅 FRESH TOMATOES · 🥖 HANDMADE DOUGH · 🌿 FRESH BASIL · 🧀 BUFFALO MOZZARELLA · 🔥 HAND TOSSED · 🤌 FRESHLY BAKED · ";
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: "#FF3C3C",
-        overflow: "hidden",
-        padding: "0.8rem 0",
-        zIndex: 20,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          width: "max-content",
-          animation: "marquee 40s linear infinite",
-        }}
-      >
-        {[...Array(4)].map((_, i) => (
-          <span
-            key={i}
-            style={{
-              fontFamily: "Space Mono, monospace",
-              fontSize: "0.75rem",
-              letterSpacing: "0.15em",
-              color: "#fff",
-              whiteSpace: "nowrap",
-              paddingRight: "2rem",
-            }}
-          >
-            {text}
-          </span>
-        ))}
-      </div>
-      <style jsx global>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
-    </div>
   );
 }
