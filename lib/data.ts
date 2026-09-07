@@ -129,7 +129,7 @@ export const menuItems: MenuItem[] = [
     price: "230", category: "Appetizers", tags: ["VEG", "SPICY"], image: friesImg,
   },
   {
-    id: "a04", name: "Crispy Spicy Aalu", description: "Nepali-style spicy potato bites",
+    id: "a04", name: "Crispy Spicy Aalu", description: "Spicy potato bites",
     price: "190", category: "Appetizers", tags: ["VEG", "LOCAL"], image: friesImg,
   },
   {
@@ -376,7 +376,7 @@ export const menuItems: MenuItem[] = [
     price: "160", category: "Drinks", tags: ["HOT", "COMFORT"], image: coffeeImg,
   },
   {
-    id: "d09", name: "Milk Tea", description: "Traditional Nepali milk tea",
+    id: "d09", name: "Milk Tea", description: "Traditional milk tea",
     price: "80", category: "Drinks", tags: ["HOT", "LOCAL"], image: coffeeImg,
   },
   {
@@ -409,9 +409,9 @@ export const todaysSpecials = [
 
 export const testimonials = [
   { name: "Arjun Shrestha", location: "Kathmandu", stars: 5,
-    review: "Pizza Planet को Mozzarella Crust खाएपछि अरु कुनै pizza मन पर्दैन। एकदम अद्भुत स्वाद! यो ठाउँ साँच्चै 'Planet of Cheeseness' हो।" },
+    review: "After trying Pizza Planet's Mozzarella Crust, no other pizza tastes good. Absolutely amazing taste! This place truly is 'Planet of Cheeseness'." },
   { name: "Priya Thapa", location: "Pokhara", stars: 5,
-    review: "The Chicken Momo here is something else entirely. Best dumplings I've had in Nepal, hands down. The vibe is pure joy!" },
+    review: "The Chicken Momo here is something else entirely. Best dumplings I've had, hands down. The vibe is pure joy!" },
   { name: "Roshan Adhikari", location: "Lalitpur", stars: 5,
     review: "A Slice of HAPPINESS — that's what Pizza Planet delivers every single time. The Planet Size pizza is our weekend ritual now." },
   { name: "Sujata Maharjan", location: "Bhaktapur", stars: 5,

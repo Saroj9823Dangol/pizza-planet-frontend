@@ -2,21 +2,21 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Pizza Planet Nepal — Planet of Cheeseness, Togetherness & Happiness",
+  title: "Pizza Planet — Planet of Cheeseness, Togetherness & Happiness",
   description:
-    "Best pizza in Kathmandu! Wood-fired pizzas, momo, chicken wings, pasta, shakes & more. Welcome to Planet of Cheeseness, Togetherness & Happiness. Order now!",
+    "Best pizza! Wood-fired pizzas, momo, chicken wings, pasta, shakes & more. Welcome to Planet of Cheeseness, Togetherness & Happiness. Order now!",
   keywords:
-    "pizza planet, pizza nepal, kathmandu pizza, pizza delivery, momo, chicken wings, pasta, shakes, best pizza kathmandu, pizza planet nepal",
+    "pizza planet, pizza delivery, momo, chicken wings, pasta, shakes, best pizza, pizza planet",
   openGraph: {
-    title: "Pizza Planet Nepal — Planet of Cheeseness, Togetherness & Happiness",
-    description: "Best pizza, momo, wings & more in Kathmandu. A Slice of HAPPINESS awaits!",
+    title: "Pizza Planet — Planet of Cheeseness, Togetherness & Happiness",
+    description: "Best pizza, momo, wings & more. A Slice of HAPPINESS awaits!",
     type: "website",
-    locale: "ne_NP",
-    siteName: "Pizza Planet Nepal",
+    locale: "en_US",
+    siteName: "Pizza Planet",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pizza Planet Nepal",
+    title: "Pizza Planet",
     description: "Welcome to Planet of Cheeseness, Togetherness & Happiness!",
   },
   icons: {
@@ -31,20 +31,20 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Restaurant",
-  name: "Pizza Planet Nepal",
-  description: "Planet of Cheeseness, Togetherness & Happiness. Best pizza, momo, wings, pasta in Kathmandu.",
-  url: "https://pizzaplanetnepal.com",
-  servesCuisine: ["Italian", "Nepali", "Fast Food", "Pizza"],
+  name: "Pizza Planet",
+  description: "Planet of Cheeseness, Togetherness & Happiness. Best pizza, momo, wings, pasta.",
+  url: "https://pizzaplanet.com",
+  servesCuisine: ["Italian", "Fast Food", "Pizza"],
   priceRange: "$$",
-  address: { "@type": "PostalAddress", addressLocality: "Kathmandu", addressCountry: "NP" },
   aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", bestRating: "5", ratingCount: "150" },
-  menu: "https://pizzaplanetnepal.com/menu",
+  menu: "https://pizzaplanet.com/menu",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <div className="grain-overlay" aria-hidden="true" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
       </body>
