@@ -1285,7 +1285,9 @@ body::before {
 .fm-instagram-rail { position: relative; padding: 2rem 0 4rem; }
 .fm-instagram-track { display: flex; width: max-content; gap: .7rem; animation: fm-instagram-marquee 42s linear infinite; }
 .fm-instagram-track:hover { animation-play-state: paused; }
-.fm-instagram-thumb { display: block; width: clamp(92px, 10vw, 150px); aspect-ratio: .92; overflow: hidden; border-radius: 28% 28% 35% 35%; }
+.fm-instagram-thumb { display: block; width: clamp(92px, 10vw, 150px); aspect-ratio: .92; overflow: hidden; border-radius: 28% 28% 35% 35%; transition: transform .35s ease; }
+.fm-instagram-thumb:hover { transform: translateY(-8px) rotate(-2deg); }
+.fm-instagram-thumb:nth-child(even):hover { transform: translateY(-8px) rotate(2deg); }
 .fm-instagram-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .fm-instagram-follow { position: absolute; z-index: 2; bottom: .5rem; left: 50%; display: flex; min-width: min(470px, 88vw); align-items: center; justify-content: space-between; gap: 1rem; border-radius: 999px; padding: 1.15rem 1.4rem; background: white; color: var(--ink); box-shadow: 0 12px 40px rgba(33, 30, 25, .12); transform: translateX(-50%); text-decoration: none; }
 .fm-instagram-follow span { font-family: var(--font-mono); font-size: .62rem; line-height: 1.4; }

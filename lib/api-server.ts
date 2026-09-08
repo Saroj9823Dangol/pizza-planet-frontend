@@ -88,6 +88,35 @@ export async function fetchPromosServer(): Promise<ApiPromo[]> {
   return data?.length ? data : [];
 }
 
+export interface ApiInstagramPost {
+  id: string;
+  image: string;
+  caption: string | null;
+  permalink: string;
+  publishedAt: string;
+}
+
+/** Instagram feed — server-fetched so new posts added in the admin show up
+ *  on the next page load. Falls back to the bundled shots if the API is down. */
+export async function fetchInstagramServer(): Promise<ApiInstagramPost[]> {
+  const data = await getJson<ApiInstagramPost[]>("/api/instagram");
+  if (data?.length) return data;
+  return FALLBACK_INSTAGRAM;
+}
+
+export const FALLBACK_INSTAGRAM: ApiInstagramPost[] = [
+  { id: "shot-1", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-2", image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-3", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-4", image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-5", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-6", image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-7", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-8", image: "https://images.unsplash.com/photo-1579751626657-72bc17010498?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-9", image: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+  { id: "shot-10", image: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=700&q=80", caption: null, permalink: "https://instagram.com", publishedAt: new Date().toISOString() },
+];
+
 export interface ApiBranch {
   id: string;
   name: string;
