@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ScrollToTop from "@/components/ScrollToTop";
+import CartSync from "@/components/CartSync";
 
 export const metadata: Metadata = {
   title: "Pizza Planet — Planet of Cheeseness, Togetherness & Happiness",
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
         <ScrollToTop />
+        <CartSync />
       </body>
     </html>
   );

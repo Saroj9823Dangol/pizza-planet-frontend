@@ -15,8 +15,9 @@ import { fetchBlogPostsServer, fetchBranchesServer, fetchCrustsServer, fetchInst
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [promos, bestsellers, featured, posts, branches, crusts, instagram] = await Promise.all([
+  const [promos, allItems, bestsellers, featured, posts, branches, crusts, instagram] = await Promise.all([
     fetchPromosServer(),
+    fetchMenuItemsServer(),
     fetchMenuItemsServer({ bestseller: true }),
     fetchMenuItemsServer({ featured: true }),
     fetchBlogPostsServer(6),
@@ -33,7 +34,7 @@ export default async function Home() {
       </div>
       <main>
         <PromoBanners initialPromos={promos} />
-        <PizzaBuilder crusts={crusts} />
+        <PizzaBuilder crusts={crusts} items={allItems} />
         <SlowFastFood />
         <MenuShowcase
           kicker="Fan favourites, straight from the oven"

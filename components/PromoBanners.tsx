@@ -12,8 +12,18 @@ const SHAPES = ["fm-organic-a", "fm-organic-b", "fm-organic-c"] as const;
 export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPromo[] }) {
   const promos = initialPromos && initialPromos.length ? initialPromos : [];
 
+  // No active banners → render nothing. Never leave an empty styled section
+  // (or stale static banners) behind — the section exists only when there is
+  // something to show, and the data is refetched fresh on every page load.
+  if (promos.length === 0) return null;
+
   return (
     <section className="fm-promo-section">
+      <div className="fm-promo-heading">
+        <p className="fm-kicker">Fresh from the oven</p>
+        <h2 className="fm-hand-title">Specials<span className="fm-red-dash">—</span></h2>
+        <p className="fm-promo-subtitle">This week&apos;s hand-picked offers — like the menu, but with a little more going on.</p>
+      </div>
       <div className="fm-promo-grid">
         {promos.map((promo, index) => {
           const orderable = Boolean(promo.menuItemId && promo.price !== null);
