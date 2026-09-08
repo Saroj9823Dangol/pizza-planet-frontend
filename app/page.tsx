@@ -1,25 +1,30 @@
-"use client";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Menu from "@/components/Menu";
-import TodaysSpecial from "@/components/TodaysSpecial";
-import Order from "@/components/Order";
-import Testimonials from "@/components/Testimonials";
+import PromoBanners from "@/components/PromoBanners";
+import SlowFastFood from "@/components/SlowFastFood";
+import MenuTeaser from "@/components/MenuTeaser";
+import Locations from "@/components/Locations";
+import Journal from "@/components/Journal";
+import InstaStrip from "@/components/InstaStrip";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
+import PizzaBuilder from "@/components/PizzaBuilder";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main>
+      <div className="relative">
+        <Navbar overlay />
         <Hero />
-        <About />
-        <TodaysSpecial />
-        <Menu />
-        <Order />
-        <Testimonials />
+      </div>
+      <main>
+        <PromoBanners />
+        <PizzaBuilder />
+        <SlowFastFood />
+        <MenuTeaser />
+        <Locations />
+        <Journal />
+        <InstaStrip />
       </main>
       <Footer />
       <CartSidebar />

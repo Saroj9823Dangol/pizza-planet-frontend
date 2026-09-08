@@ -1,574 +1,176 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { menuItems, MenuCategory, MenuItem } from "@/lib/data";
-import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import AddToCartModal from "./AddToCartModal";
+import { ApiCategory, ApiMenuItem, fetchCategories, fetchMenuItems, rs } from "@/lib/api";
 
-const foodCats: { label: string; value: MenuCategory; emoji: string }[] = [
-  { label: "PIZZA", value: "Pizza", emoji: "🍕" },
-  { label: "APPETIZERS", value: "Appetizers", emoji: "🍟" },
-  { label: "BREADS", value: "Breads", emoji: "🥖" },
-  { label: "MOMO", value: "Momo", emoji: "🥟" },
-  { label: "WINGS", value: "Chicken Wings", emoji: "🍗" },
-  { label: "PASTA", value: "Pasta", emoji: "🍝" },
-  { label: "BURGERS", value: "Burgers", emoji: "🍔" },
-  { label: "SALADS", value: "Salads", emoji: "🥗" },
-  { label: "SOUPS", value: "Soups", emoji: "🍵" },
+const FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=88",
+  "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=1200&q=88",
+  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200&q=88",
+  "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=1200&q=88",
+  "https://images.unsplash.com/photo-1579751626657-72bc17010498?w=1200&q=88",
+  "https://images.unsplash.com/photo-1593560708920-61dd98c8c8c8?w=1200&q=88",
 ];
 
-const drinkCats: { label: string; value: MenuCategory; emoji: string }[] = [
-  { label: "COFFEE", value: "Coffee", emoji: "☕" },
-  { label: "SHAKES", value: "Shakes", emoji: "🥤" },
-  { label: "DRINKS", value: "Drinks", emoji: "🧃" },
-  { label: "ICE CREAM", value: "Ice Cream", emoji: "🍦" },
-];
+const CATEGORY_INTROS: Record<string, { title: string; body: string }> = {
+  "pre-pizza": {
+    title: "Aperitivo, the Kathmandu way.",
+    body: "Start your meal with something refreshing and something tasty to pick at. Perfect for sharing — or not.",
+  },
+  bites: {
+    title: "Small plates, big attitude.",
+    body: "Bold flavours, warm plates, and just enough to get things started.",
+  },
+  pizza: {
+    title: "All rise — sourdough in session.",
+    body: "Freshly made pizzas with honest ingredients. Our pizzaioli are waiting.",
+  },
+  salads: {
+    title: "Only overdress on Sundays.",
+    body: "Fresh salads with understated, rich flavour. Consume liberally.",
+  },
+  drinks: {
+    title: "Never count years or glasses.",
+    body: "Cold drinks, Italian-inspired cocktails, coffee, and something good for every table.",
+  },
+  desserts: {
+    title: "Dolce makes you live longer.",
+    body: "A sweet finish with a Pizza Planet touch. Do not be bitter — have dessert.",
+  },
+};
 
-const allCats = [...foodCats, ...drinkCats];
-
-function getCategoryCount(cat: MenuCategory) {
-  return menuItems.filter((m) => m.category === cat).length;
+function priceRange(item: ApiMenuItem) {
+  const prices = item.variants.map((variant) => variant.price);
+  return prices.length > 1
+    ? `${rs(Math.min(...prices))} – ${rs(Math.max(...prices))}`
+    : rs(item.basePrice);
 }
 
-function PizzaCard({ item, onAdd }: { item: MenuItem; onAdd: () => void }) {
-  const [added, setAdded] = useState(false);
-  const handleAdd = () => {
-    onAdd();
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
-  };
-
-  return (
-    <motion.div
-      whileHover={{ y: -6 }}
-      style={{
-        background: "#fff",
-        border: "1px solid #e8e0d8",
-        overflow: "hidden",
-        cursor: "pointer",
-        transition: "box-shadow 0.3s",
-        position: "relative",
-      }}
-      onClick={onAdd}
-    >
-      {/* Image */}
-      <div style={{
-        position: "relative",
-        width: "100%",
-        aspectRatio: "4/3",
-        overflow: "hidden",
-      }}>
-        <Image
-          src={item.image}
-          alt={item.name}
-          fill
-          style={{ objectFit: "cover", transition: "transform 0.4s" }}
-          unoptimized
-        />
-        {/* Gradient overlay */}
-        <div style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 50%)",
-        }} />
-
-        {/* Bestseller badge */}
-        {item.bestseller && (
-          <div style={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            background: "#e63946",
-            color: "#fff",
-            padding: "3px 10px",
-            fontFamily: "Space Mono, monospace",
-            fontSize: "0.5rem",
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-          }}>
-            ★ BESTSELLER
-          </div>
-        )}
-
-        {/* Price overlay */}
-        <div style={{
-          position: "absolute",
-          bottom: "10px",
-          right: "10px",
-          background: "#f4a261",
-          color: "#fff",
-          padding: "4px 12px",
-          fontFamily: "Righteous, sans-serif",
-          fontSize: "1rem",
-        }}>
-          Rs. {item.sizes ? item.sizes[0].price : item.price}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div style={{ padding: "1rem 1.2rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
-          <h3 style={{
-            fontFamily: "Righteous, sans-serif",
-            fontSize: "clamp(1.1rem, 1.8vw, 1.3rem)",
-            color: "#2d2d2d",
-            margin: 0,
-            lineHeight: 1.2,
-          }}>
-            {item.name}
-          </h3>
-        </div>
-        <p style={{
-          fontFamily: "DM Sans, sans-serif",
-          fontSize: "0.8rem",
-          color: "#999",
-          lineHeight: 1.5,
-          margin: "0.4rem 0 0.8rem",
-        }}>
-          {item.description}
-        </p>
-
-        {/* Sizes */}
-        {item.sizes && (
-          <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
-            {item.sizes.map((s) => (
-              <span key={s.label} style={{
-                fontFamily: "Space Mono, monospace",
-                fontSize: "0.5rem",
-                color: "#999",
-                background: "#f5f0ea",
-                padding: "2px 8px",
-                letterSpacing: "0.03em",
-              }}>
-                {s.label} Rs.{s.price}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Add button */}
-        <button
-          onClick={(e) => { e.stopPropagation(); handleAdd(); }}
-          style={{
-            width: "100%",
-            marginTop: "0.8rem",
-            padding: "0.6rem",
-            background: added ? "#2a9d8f" : "#2d2d2d",
-            color: "#fff",
-            border: "none",
-            fontFamily: "Space Mono, monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.12em",
-            cursor: "pointer",
-            transition: "background 0.3s",
-          }}
-        >
-          {added ? "✓ ADDED" : "+ ADD TO TRAY"}
-        </button>
-      </div>
-    </motion.div>
-  );
-}
-
-function MenuRowItem({ item, onAdd }: { item: MenuItem; onAdd: () => void }) {
-  const [added, setAdded] = useState(false);
-  const handleAdd = () => {
-    onAdd();
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-20px" }}
-      transition={{ duration: 0.3 }}
-      style={{
-        display: "flex",
-        gap: "1rem",
-        alignItems: "center",
-        padding: "1rem 0",
-        borderBottom: "1px solid #f0ece6",
-      }}
-    >
-      {/* Image */}
-      {item.image && (
-        <div style={{
-          width: "60px",
-          height: "60px",
-          borderRadius: "8px",
-          overflow: "hidden",
-          flexShrink: 0,
-          position: "relative",
-          background: "#f5f0ea",
-        }}>
-          <Image src={item.image} alt={item.name} fill style={{ objectFit: "cover" }} unoptimized />
-        </div>
-      )}
-
-      {/* Content */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "0.5rem" }}>
-          <h4 style={{
-            fontFamily: "Righteous, sans-serif",
-            fontSize: "clamp(1rem, 1.5vw, 1.15rem)",
-            color: "#2d2d2d",
-            margin: 0,
-            lineHeight: 1.2,
-          }}>
-            {item.name}
-            {item.bestseller && (
-              <span style={{
-                fontFamily: "Space Mono, monospace",
-                fontSize: "0.45rem",
-                color: "#e63946",
-                marginLeft: "0.4rem",
-                letterSpacing: "0.1em",
-              }}>★</span>
-            )}
-          </h4>
-          <span style={{
-            fontFamily: "Righteous, sans-serif",
-            fontSize: "clamp(1rem, 1.5vw, 1.15rem)",
-            color: "#f4a261",
-            whiteSpace: "nowrap",
-          }}>Rs. {item.price}</span>
-        </div>
-        <p style={{
-          fontFamily: "DM Sans, sans-serif",
-          fontSize: "0.8rem",
-          color: "#999",
-          lineHeight: 1.5,
-          margin: "0.2rem 0",
-        }}>
-          {item.description}
-        </p>
-
-        {/* Sizes + Tags */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
-          <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
-            {item.sizes ? (
-              item.sizes.map((s) => (
-                <span key={s.label} style={{
-                  fontFamily: "Space Mono, monospace",
-                  fontSize: "0.48rem",
-                  color: "#bbb",
-                  letterSpacing: "0.02em",
-                }}>
-                  {s.label} {s.price}
-                </span>
-              ))
-            ) : (
-              item.tags?.slice(0, 2).map((tag) => (
-                <span key={tag} style={{
-                  fontFamily: "Space Mono, monospace",
-                  fontSize: "0.48rem",
-                  color: "#ccc",
-                  letterSpacing: "0.04em",
-                }}>
-                  {tag.toUpperCase()}
-                </span>
-              ))
-            )}
-          </div>
-          <button
-            onClick={handleAdd}
-            style={{
-              background: "none",
-              border: "none",
-              fontFamily: "Space Mono, monospace",
-              fontSize: "0.55rem",
-              letterSpacing: "0.05em",
-              color: added ? "#2a9d8f" : "#e63946",
-              cursor: "pointer",
-              padding: 0,
-              flexShrink: 0,
-              transition: "color 0.2s",
-            }}
-          >
-            {added ? "✓ ADDED" : "+ ADD"}
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function CategorySection({
-  title,
-  emoji,
-  items,
-  onAdd,
-  accentColor = "#e63946",
-}: {
-  title: string;
-  emoji: string;
-  items: MenuItem[];
-  onAdd: (item: MenuItem) => void;
-  accentColor?: string;
-}) {
-  if (items.length === 0) return null;
-
-  // Pizzas get the card layout
-  const isPizza = title === "PIZZA";
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5 }}
-      style={{ marginBottom: "clamp(3rem, 6vw, 5rem)" }}
-    >
-      {/* Category header */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "1rem",
-        marginBottom: "clamp(1.5rem, 3vw, 2rem)",
-      }}>
-        <span style={{ fontSize: "1.8rem" }}>{emoji}</span>
-        <div>
-          <h3 style={{
-            fontFamily: "Righteous, sans-serif",
-            fontSize: "clamp(1.5rem, 3vw, 2rem)",
-            color: "#2d2d2d",
-            margin: 0,
-            letterSpacing: "-0.02em",
-          }}>{title}</h3>
-          <div style={{
-            fontFamily: "Space Mono, monospace",
-            fontSize: "0.55rem",
-            color: "#999",
-            letterSpacing: "0.1em",
-            marginTop: "2px",
-          }}>
-            {items.length} ITEMS
-          </div>
-        </div>
-        <div style={{
-          flex: 1,
-          height: "1px",
-          background: `linear-gradient(90deg, ${accentColor}33, transparent)`,
-        }} />
-      </div>
-
-      {/* Pizza: Card grid layout */}
-      {isPizza ? (
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: "clamp(1rem, 2vw, 1.5rem)",
-        }}>
-          {items.map((item) => (
-            <PizzaCard key={item.id} item={item} onAdd={() => onAdd(item)} />
-          ))}
-        </div>
-      ) : (
-        /* Other items: Row layout */
-        <div>
-          {items.map((item) => (
-            <MenuRowItem key={item.id} item={item} onAdd={() => onAdd(item)} />
-          ))}
-        </div>
-      )}
-    </motion.div>
-  );
+function itemImage(item: ApiMenuItem, index: number) {
+  return item.image || FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
 }
 
 export default function FullMenu() {
-  const [activeCat, setActiveCat] = useState<MenuCategory | null>(null);
-  const [modalItem, setModalItem] = useState<MenuItem | null>(null);
+  const [items, setItems] = useState<ApiMenuItem[]>([]);
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [modalItem, setModalItem] = useState<ApiMenuItem | null>(null);
 
-  const filtered = activeCat
-    ? menuItems.filter((m) => m.category === activeCat)
-    : menuItems;
+  useEffect(() => {
+    let live = true;
+    Promise.all([fetchMenuItems(), fetchCategories()]).then(([nextItems, nextCategories]) => {
+      if (!live) return;
+      setItems(nextItems);
+      setCategories(nextCategories);
+      setLoading(false);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
-  // Group items by category
-  const grouped = filtered.reduce<Record<string, MenuItem[]>>((acc, item) => {
-    if (!acc[item.category]) acc[item.category] = [];
-    acc[item.category].push(item);
-    return acc;
-  }, {});
+  const grouped = useMemo(() => {
+    return categories
+      .map((category) => ({
+        category,
+        items: items.filter((item) => item.category.slug === category.slug),
+      }))
+      .filter(({ items: categoryItems }) => categoryItems.length > 0);
+  }, [categories, items]);
 
   return (
-    <section style={{
-      background: "#fff8f0",
-      minHeight: "100dvh",
-      padding: "clamp(2rem, 6vw, 5rem) clamp(1rem, 5vw, 5rem)",
-      position: "relative",
-      overflow: "hidden",
-    }}>
-      {/* Decorative background */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.04, overflow: "hidden" }}>
-        <span style={{
-          position: "absolute", top: "5%", right: "5%",
-          fontFamily: "Righteous, sans-serif", fontSize: "3rem",
-          color: "#e63946", transform: "rotate(-3deg)", whiteSpace: "nowrap",
-        }}>A SLICE OF HAPPINESS</span>
-        <span style={{
-          position: "absolute", bottom: "10%", left: "3%",
-          fontFamily: "Pacifico, cursive", fontSize: "2rem",
-          color: "#f4a261", transform: "rotate(2deg)", whiteSpace: "nowrap",
-        }}>Extraaa.. Layers of Happiness!</span>
-      </div>
+    <section className="fm-menu-page fm-menu-page--reference">
+      <header className="fm-menu-intro-spread">
+        <div className="fm-menu-intro-copy">
+          <p className="fm-kicker">Pizza Planet · Handmade every day</p>
+          <h1>Whatever the question.<br />The answer is pizza.</h1>
+          <p>
+            Like what&apos;s the best use of handmade, slow-rising sourdough? Or what makes a good pizza worth coming back for? Fresh dough, honest toppings, and a hot oven have a lot to say.
+          </p>
+          <p>
+            Our menu changes with the seasons while keeping the things that matter: generous food, small bills, and room at the table for one more.
+          </p>
+          <a href="/order" className="fm-red-button">Order &amp; collect</a>
+        </div>
+        <div className="fm-menu-intro-image fm-organic-b">
+          <img src={FALLBACK_IMAGES[0]} alt="Fresh Pizza Planet sourdough pizza" />
+          <span className="fm-menu-doodle-arrow" aria-hidden="true">↙</span>
+          <p>Find our specials on the blackboard of your local pizzeria.</p>
+        </div>
+      </header>
 
-      <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative", zIndex: 1 }}>
-        {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{ textAlign: "center", marginBottom: "clamp(2rem, 5vw, 3rem)" }}
-        >
-          <div style={{
-            fontFamily: "Space Mono, monospace",
-            fontSize: "0.7rem",
-            letterSpacing: "0.3em",
-            color: "#e63946",
-            marginBottom: "0.5rem",
-          }}>~ FULL MENU ~</div>
-          <h1 style={{
-            fontFamily: "Righteous, sans-serif",
-            fontSize: "clamp(2rem, 6vw, 4rem)",
-            lineHeight: 1,
-            margin: "0.3rem 0",
-            letterSpacing: "-0.04em",
-            backgroundImage: "url('https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1400&q=80')",
-            backgroundSize: "cover",
-            backgroundPosition: "center 40%",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}>MENU</h1>
-          <p style={{
-            fontFamily: "Space Mono, monospace",
-            fontSize: "0.65rem",
-            color: "#999",
-            letterSpacing: "0.15em",
-            marginTop: "0.8rem",
-          }}>──── Something for Everyone ────</p>
-        </motion.div>
+      <nav className="fm-menu-explore" aria-label="Explore menu categories">
+        <span className="fm-explore-label">Explore <b aria-hidden="true">↘</b></span>
+        {categories.map((category) => (
+          <a key={category.id} href={`#menu-${category.slug}`} className="fm-explore-pill">
+            {category.name}
+          </a>
+        ))}
+      </nav>
 
-        {/* VISUAL CATEGORY GRID */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-            gap: "0.5rem",
-            marginBottom: "clamp(2rem, 5vw, 3rem)",
-          }}
-        >
-          {/* ALL button */}
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => setActiveCat(null)}
-            style={{
-              background: !activeCat ? "#2d2d2d" : "#fff",
-              color: !activeCat ? "#fff" : "#2d2d2d",
-              border: "1px solid #e8e0d8",
-              padding: "1rem 0.5rem",
-              cursor: "pointer",
-              fontFamily: "Righteous, sans-serif",
-              fontSize: "0.75rem",
-              letterSpacing: "0.05em",
-              transition: "all 0.2s",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.3rem",
-            }}
-          >
-            <span style={{ fontSize: "1.5rem" }}>📋</span>
-            ALL
-            <span style={{
-              fontFamily: "Space Mono, monospace",
-              fontSize: "0.45rem",
-              opacity: 0.6,
-            }}>{menuItems.length}</span>
-          </motion.button>
-
-          {allCats.map((cat) => {
-            const count = getCategoryCount(cat.value);
-            const isActive = activeCat === cat.value;
+      {loading ? (
+        <p className="fm-menu-loading">Warming up the oven…</p>
+      ) : (
+        <div className="fm-reference-categories">
+          {grouped.map(({ category, items: categoryItems }, categoryIndex) => {
+            const intro = CATEGORY_INTROS[category.slug] ?? {
+              title: `${category.name}, made properly.`,
+              body: "Fresh from the Pizza Planet kitchen and ready for the table.",
+            };
+            const featured = categoryItems[0];
             return (
-              <motion.button
-                key={cat.value}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setActiveCat(isActive ? null : cat.value)}
-                style={{
-                  background: isActive ? "#f4a261" : "#fff",
-                  color: isActive ? "#fff" : "#2d2d2d",
-                  border: "1px solid #e8e0d8",
-                  padding: "1rem 0.5rem",
-                  cursor: "pointer",
-                  fontFamily: "Righteous, sans-serif",
-                  fontSize: "0.7rem",
-                  letterSpacing: "0.05em",
-                  transition: "all 0.2s",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "0.3rem",
-                }}
-              >
-                <span style={{ fontSize: "1.5rem" }}>{cat.emoji}</span>
-                {cat.label}
-                <span style={{
-                  fontFamily: "Space Mono, monospace",
-                  fontSize: "0.45rem",
-                  opacity: 0.6,
-                }}>{count}</span>
-              </motion.button>
+              <section id={`menu-${category.slug}`} className="fm-reference-category fm-wave-section fm-wave-section--paper" key={category.id}>
+                <header className="fm-reference-category-heading">
+                  <h2>{category.name}<span>+</span></h2>
+                </header>
+
+                <div className="fm-reference-category-intro">
+                  <div className="fm-reference-category-copy">
+                    <h3>{intro.title}</h3>
+                    <p>{intro.body}</p>
+                    <p className="fm-reference-note">Vegan and vegetarian options available, naturally.</p>
+                  </div>
+                  <div className={`fm-reference-feature fm-organic-${String.fromCharCode(97 + (categoryIndex % 3))}`}>
+                    <img src={itemImage(featured, categoryIndex)} alt={featured.name} />
+                  </div>
+                </div>
+
+                <div className="fm-reference-item-grid">
+                  {categoryItems.map((item, itemIndex) => {
+                    const soldOut = item.isAvailable === false || item.canMake === false;
+                    return (
+                      <motion.button
+                        key={item.id}
+                        type="button"
+                        disabled={soldOut}
+                        onClick={() => setModalItem(item)}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-40px" }}
+                        transition={{ duration: 0.35, delay: (itemIndex % 3) * 0.06 }}
+                        className={`fm-reference-item ${soldOut ? "fm-reference-item--sold" : ""}`}
+                      >
+                        <span className={`fm-reference-item-image fm-organic-${String.fromCharCode(97 + (itemIndex % 3))}`}>
+                          <img src={itemImage(item, itemIndex + categoryIndex)} alt={item.name} />
+                        </span>
+                        <span className="fm-reference-item-copy">
+                          {item.isBestseller && <small>Favourite</small>}
+                          <strong>{item.name}</strong>
+                          <span>{item.description || "Made fresh to order."}</span>
+                          <em>{soldOut ? "Sold out" : priceRange(item)}</em>
+                        </span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </section>
             );
           })}
-        </motion.div>
+        </div>
+      )}
 
-        {/* MENU SECTIONS */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCat || "all"}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            {activeCat ? (
-              // Single category view
-              grouped[activeCat] && (
-                <CategorySection
-                  title={allCats.find((c) => c.value === activeCat)?.label || activeCat}
-                  emoji={allCats.find((c) => c.value === activeCat)?.emoji || "🍽️"}
-                  items={grouped[activeCat]}
-                  onAdd={(item) => setModalItem(item)}
-                />
-              )
-            ) : (
-              // All categories
-              Object.entries(grouped).map(([cat, items]) => {
-                const catInfo = allCats.find((c) => c.value === cat);
-                return (
-                  <CategorySection
-                    key={cat}
-                    title={catInfo?.label || cat}
-                    emoji={catInfo?.emoji || "🍽️"}
-                    items={items}
-                    onAdd={(item) => setModalItem(item)}
-                    accentColor={cat === "Pizza" ? "#e63946" : cat === "Momo" ? "#f4a261" : "#2a9d8f"}
-                  />
-                );
-              })
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
+      <p className="fm-menu-footer-note">Gluten-free and vegan options available, naturally. Eat your crusts.</p>
       {modalItem && <AddToCartModal item={modalItem} onClose={() => setModalItem(null)} />}
     </section>
   );

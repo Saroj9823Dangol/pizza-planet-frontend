@@ -8,7 +8,7 @@ export default function OrderPage() {
   return (
     <>
       <Navbar />
-      <main style={{ paddingTop: "72px" }}>
+      <main>
         <FullOrder />
       </main>
       <Footer />

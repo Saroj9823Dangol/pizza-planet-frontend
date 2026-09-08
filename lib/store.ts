@@ -1,14 +1,18 @@
 import { create } from "zustand";
 
 export interface CartItem {
-  id: string;
+  id: string; // composite: itemId-variant-toppings-note
   name: string;
-  price: number;
+  price: number; // NPR (display)
   quantity: number;
   size?: string;
   crust?: string;
-  toppings?: string[];
+  toppings?: string[]; // display names
   notes?: string;
+  // API linkage — needed to place the order on the backend
+  itemId?: string;
+  variantId?: string;
+  toppingIds?: string[];
 }
 
 interface CartStore {

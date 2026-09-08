@@ -8,7 +8,7 @@ export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main style={{ paddingTop: "72px" }}>
+      <main>
         <About />
       </main>
       <Footer />

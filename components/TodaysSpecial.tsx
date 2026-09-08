@@ -1,8 +1,23 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { ApiMenuItem, fetchMenuItems, npr } from "@/lib/api";
 import { todaysSpecials } from "@/lib/data";
 
+const EMOJIS = ["🧀", "🥟", "🌶️", "🍕"];
+
 export default function TodaysSpecial() {
+  const [items, setItems] = useState<ApiMenuItem[] | null>(null);
+
+  useEffect(() => {
+    fetchMenuItems({ bestseller: true })
+      .then(setItems)
+      .catch(() => setItems(null));
+  }, []);
+
+  // Live bestsellers when the API is up; bundled specials otherwise.
+  const specials = items && items.length > 0 ? items : null;
+
   return (
     <section style={{
       background: "linear-gradient(135deg, #fff8f0 0%, #ffedd5 50%, #fffdf5 100%)",
@@ -75,78 +90,162 @@ export default function TodaysSpecial() {
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
           gap: "1.5rem",
         }}>
-          {todaysSpecials.map((item, i) => (
-            <motion.div key={item.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
-              whileHover={{ y: -5, boxShadow: "0 12px 40px rgba(244, 162, 97, 0.2)" }}
-              style={{
-                background: "#fff",
-                border: "1px solid #e8e0d8",
-                padding: "clamp(1.5rem, 3vw, 2rem)",
-                textAlign: "center",
-                position: "relative",
-                overflow: "hidden",
-                transition: "all 0.3s",
-              }}>
-              {/* Corner accent */}
-              <div style={{
-                position: "absolute", top: 0, right: 0,
-                width: 0, height: 0,
-                borderStyle: "solid",
-                borderWidth: "0 45px 45px 0",
-                borderColor: "transparent #e63946 transparent transparent",
-              }} />
-              <span style={{
-                position: "absolute", top: "5px", right: "2px",
-                fontSize: "0.5rem", color: "#fff",
-                fontFamily: "Space Mono, monospace",
-                letterSpacing: "0.05em",
-                transform: "rotate(45deg)",
-              }}>HOT</span>
+          {specials
+            ? specials.slice(0, 4).map((item, i) => {
+                const price = item.variants?.[0]?.price ?? item.basePrice;
+                return (
+                  <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
+                    whileHover={{ y: -5, boxShadow: "0 12px 40px rgba(244, 162, 97, 0.2)" }}
+                    style={{
+                      background: "#fff",
+                      border: "1px solid #e8e0d8",
+                      padding: "clamp(1.5rem, 3vw, 2rem)",
+                      textAlign: "center",
+                      position: "relative",
+                      overflow: "hidden",
+                      transition: "all 0.3s",
+                    }}>
+                    <div style={{
+                      position: "absolute", top: 0, right: 0,
+                      width: 0, height: 0,
+                      borderStyle: "solid",
+                      borderWidth: "0 45px 45px 0",
+                      borderColor: "transparent #e63946 transparent transparent",
+                    }} />
+                    <span style={{
+                      position: "absolute", top: "5px", right: "2px",
+                      fontSize: "0.5rem", color: "#fff",
+                      fontFamily: "Space Mono, monospace",
+                      letterSpacing: "0.05em",
+                      transform: "rotate(45deg)",
+                    }}>HOT</span>
 
-              {/* Pizza emoji */}
-              <div style={{
-                fontSize: "2.5rem",
-                marginBottom: "1rem",
-                animation: "wiggle 3s ease-in-out infinite",
-                animationDelay: `${i * 0.3}s`,
-              }}>
-                {i === 0 ? "🧀" : i === 1 ? "🥟" : i === 2 ? "🌶️" : "🍕"}
-              </div>
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{
+                          width: "84px", height: "84px", objectFit: "cover",
+                          borderRadius: "50%", margin: "0 auto 1rem",
+                          border: "2px solid #f4a261",
+                        }}
+                      />
+                    ) : (
+                      <div style={{
+                        fontSize: "2.5rem",
+                        marginBottom: "1rem",
+                        animation: "wiggle 3s ease-in-out infinite",
+                        animationDelay: `${i * 0.3}s`,
+                      }}>
+                        {EMOJIS[i % EMOJIS.length]}
+                      </div>
+                    )}
 
-              <div style={{
-                fontFamily: "Righteous, sans-serif",
-                fontSize: "clamp(1.2rem, 2.5vw, 1.5rem)",
-                color: "#2d2d2d",
-                marginBottom: "0.5rem",
-                lineHeight: 1.2,
-              }}>
-                {item.name}
-              </div>
+                    <div style={{
+                      fontFamily: "Righteous, sans-serif",
+                      fontSize: "clamp(1.2rem, 2.5vw, 1.5rem)",
+                      color: "#2d2d2d",
+                      marginBottom: "0.5rem",
+                      lineHeight: 1.2,
+                    }}>
+                      {item.name}
+                    </div>
 
-              <div style={{
-                fontFamily: "Righteous, sans-serif",
-                fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
-                color: "#f4a261",
-                marginBottom: "1rem",
-              }}>
-                Rs. {item.price}
-              </div>
+                    <div style={{
+                      fontFamily: "Righteous, sans-serif",
+                      fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
+                      color: "#f4a261",
+                      marginBottom: "1rem",
+                    }}>
+                      Rs. {Math.round(npr(price)).toLocaleString()}
+                    </div>
 
-              <div style={{
-                fontFamily: "Space Mono, monospace",
-                fontSize: "0.55rem",
-                letterSpacing: "0.2em",
-                color: "#e63946",
-                border: "2px solid #e63946",
-                display: "inline-block",
-                padding: "3px 14px",
-                transform: "rotate(-2deg)",
-              }}>
-                ★ LIMITED
-              </div>
-            </motion.div>
-          ))}
+                    <div style={{
+                      fontFamily: "Space Mono, monospace",
+                      fontSize: "0.55rem",
+                      letterSpacing: "0.2em",
+                      color: "#e63946",
+                      border: "2px solid #e63946",
+                      display: "inline-block",
+                      padding: "3px 14px",
+                      transform: "rotate(-2deg)",
+                    }}>
+                      ★ LIMITED
+                    </div>
+                  </motion.div>
+                );
+              })
+            : todaysSpecials.map((item, i) => (
+                <motion.div key={item.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
+                  whileHover={{ y: -5, boxShadow: "0 12px 40px rgba(244, 162, 97, 0.2)" }}
+                  style={{
+                    background: "#fff",
+                    border: "1px solid #e8e0d8",
+                    padding: "clamp(1.5rem, 3vw, 2rem)",
+                    textAlign: "center",
+                    position: "relative",
+                    overflow: "hidden",
+                    transition: "all 0.3s",
+                  }}>
+                  <div style={{
+                    position: "absolute", top: 0, right: 0,
+                    width: 0, height: 0,
+                    borderStyle: "solid",
+                    borderWidth: "0 45px 45px 0",
+                    borderColor: "transparent #e63946 transparent transparent",
+                  }} />
+                  <span style={{
+                    position: "absolute", top: "5px", right: "2px",
+                    fontSize: "0.5rem", color: "#fff",
+                    fontFamily: "Space Mono, monospace",
+                    letterSpacing: "0.05em",
+                    transform: "rotate(45deg)",
+                  }}>HOT</span>
+
+                  <div style={{
+                    fontSize: "2.5rem",
+                    marginBottom: "1rem",
+                    animation: "wiggle 3s ease-in-out infinite",
+                    animationDelay: `${i * 0.3}s`,
+                  }}>
+                    {i === 0 ? "🧀" : i === 1 ? "🥟" : i === 2 ? "🌶️" : "🍕"}
+                  </div>
+
+                  <div style={{
+                    fontFamily: "Righteous, sans-serif",
+                    fontSize: "clamp(1.2rem, 2.5vw, 1.5rem)",
+                    color: "#2d2d2d",
+                    marginBottom: "0.5rem",
+                    lineHeight: 1.2,
+                  }}>
+                    {item.name}
+                  </div>
+
+                  <div style={{
+                    fontFamily: "Righteous, sans-serif",
+                    fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
+                    color: "#f4a261",
+                    marginBottom: "1rem",
+                  }}>
+                    Rs. {item.price}
+                  </div>
+
+                  <div style={{
+                    fontFamily: "Space Mono, monospace",
+                    fontSize: "0.55rem",
+                    letterSpacing: "0.2em",
+                    color: "#e63946",
+                    border: "2px solid #e63946",
+                    display: "inline-block",
+                    padding: "3px 14px",
+                    transform: "rotate(-2deg)",
+                  }}>
+                    ★ LIMITED
+                  </div>
+                </motion.div>
+              ))}
         </div>
       </div>
     </section>

@@ -8,7 +8,7 @@ export default function MenuPage() {
   return (
     <>
       <Navbar />
-      <main style={{ paddingTop: "72px" }}>
+      <main>
         <FullMenu />
       </main>
       <Footer />
