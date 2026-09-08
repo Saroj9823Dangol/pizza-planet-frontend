@@ -238,7 +238,7 @@ export interface ApiBlogPost {
   keywords?: string | null;
 }
 
-const FALLBACK_POSTS: ApiBlogPost[] = [
+export const FALLBACK_POSTS: ApiBlogPost[] = [
   {
     id: "fb1",
     title: "The Story Behind Our Wood-Fired Ovens",

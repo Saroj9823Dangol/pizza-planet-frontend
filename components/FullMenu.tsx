@@ -51,13 +51,21 @@ function itemImage(item: ApiMenuItem, index: number) {
   return item.image || FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
 }
 
-export default function FullMenu() {
-  const [items, setItems] = useState<ApiMenuItem[]>([]);
-  const [categories, setCategories] = useState<ApiCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function FullMenu({
+  initialItems,
+  initialCategories,
+}: {
+  /** Server-fetched data (async server component) — skips the client fetch. */
+  initialItems?: ApiMenuItem[];
+  initialCategories?: ApiCategory[];
+}) {
+  const [items, setItems] = useState<ApiMenuItem[]>(initialItems ?? []);
+  const [categories, setCategories] = useState<ApiCategory[]>(initialCategories ?? []);
+  const [loading, setLoading] = useState(!initialItems || !initialCategories);
   const [modalItem, setModalItem] = useState<ApiMenuItem | null>(null);
 
   useEffect(() => {
+    if (initialItems && initialCategories) return; // already server-rendered
     let live = true;
     Promise.all([fetchMenuItems(), fetchCategories()]).then(([nextItems, nextCategories]) => {
       if (!live) return;
@@ -68,7 +76,7 @@ export default function FullMenu() {
     return () => {
       live = false;
     };
-  }, []);
+  }, [initialItems, initialCategories]);
 
   const grouped = useMemo(() => {
     return categories

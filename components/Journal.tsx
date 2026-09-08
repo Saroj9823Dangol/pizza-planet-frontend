@@ -4,14 +4,15 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ApiBlogPost, fetchBlogPosts } from "@/lib/api";
 
-export default function Journal() {
-  const [posts, setPosts] = useState<ApiBlogPost[]>([]);
+export default function Journal({ initialPosts }: { initialPosts?: ApiBlogPost[] }) {
+  const [posts, setPosts] = useState<ApiBlogPost[]>(initialPosts ?? []);
 
   useEffect(() => {
+    if (initialPosts) return; // already server-rendered
     let live = true;
     fetchBlogPosts(3).then((data) => live && setPosts(data));
     return () => { live = false; };
-  }, []);
+  }, [initialPosts]);
 
   if (posts.length === 0) return null;
 

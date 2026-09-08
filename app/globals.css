@@ -646,6 +646,57 @@ body::before {
   max-width: 1320px;
   margin: 0 auto;
 }
+
+/* Journal archive pagination */
+.fm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 4rem auto 0;
+  max-width: 1320px;
+  font-family: var(--font-mono);
+}
+.fm-pagination a,
+.fm-pagination .fm-pagination-current {
+  min-width: 2.6rem;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid var(--ink);
+  text-align: center;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.fm-pagination a:hover {
+  background: var(--tomato);
+  color: var(--paper);
+}
+.fm-pagination .fm-pagination-current {
+  background: var(--ink);
+  color: var(--paper);
+  cursor: default;
+}
+.fm-pagination .fm-pagination-gap {
+  border: none;
+  min-width: auto;
+  padding: 0.6rem 0.2rem;
+}
+.fm-pagination .fm-pagination-disabled {
+  min-width: 2.6rem;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid var(--rule);
+  text-align: center;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  opacity: 0.5;
+  pointer-events: none;
+}
 .fm-journal-card { display: block; color: inherit; text-decoration: none; }
 .fm-journal-image { aspect-ratio: 1.16 / 1; overflow: hidden; margin-bottom: 1.4rem; }
 .fm-journal-card:nth-child(2) { margin-top: 4rem; }
