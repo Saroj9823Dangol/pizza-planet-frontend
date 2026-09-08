@@ -286,7 +286,64 @@ export async function fetchBlogPost(slug: string): Promise<ApiBlogPost | null> {
 }
 
 
+// ─────────────── branches & crusts (client-safe) ───────────────
+
+export type OrderSource = "MENU" | "PROMO" | "CUSTOM";
+
+export interface ApiCrust {
+  id: string;
+  name: string;
+  note: string | null;
+  priceDelta: number; // paisa
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface ApiBranch {
+  id: string;
+  name: string;
+  slug: string;
+  address: string | null;
+  city: string | null;
+  phone: string | null;
+  isActive: boolean;
+  tagline: string | null;
+  hours: string | null;
+  kitchenNote: string | null;
+  description: string[] | null;
+  features: string[] | null;
+  heroImage: string | null;
+  storyImage: string | null;
+  seats: number | null;
+}
+
+/** Pizzeria branches for client components — falls back to bundled data. */
+export async function fetchBranches(): Promise<ApiBranch[]> {
+  const data = await getJson<ApiBranch[]>("/api/branches");
+  return data?.length ? data : [];
+}
+
+/** Crust options for the custom pizza builder — falls back to empty (defaults are used). */
+export async function fetchCrusts(): Promise<ApiCrust[]> {
+  const data = await getJson<ApiCrust[]>("/api/crusts");
+  return data?.length ? data : [];
+}
+
 // ─────────────── orders ───────────────
+
+export interface PlaceOrderItem {
+  itemId: string;
+  variantId?: string;
+  quantity: number;
+  toppingIds?: string[];
+  note?: string;
+  /** Where this line came from — MENU (regular), PROMO (banner offer) or CUSTOM (build-your-own). */
+  source?: OrderSource;
+  /** Required when source = PROMO. */
+  promoId?: string;
+  /** Required when source = CUSTOM — the chosen crust. */
+  crustId?: string;
+}
 
 export interface PlaceOrderPayload {
   customerName: string;
@@ -298,13 +355,7 @@ export interface PlaceOrderPayload {
   paymentMethod?: "CASH" | "ESEWA" | "KHALTI" | "FONEPAY" | "CARD";
   /** Branch (location) slug the order belongs to — resolved server-side. */
   branchId?: string;
-  items: {
-    itemId: string;
-    variantId?: string;
-    quantity: number;
-    toppingIds?: string[];
-    note?: string;
-  }[];
+  items: PlaceOrderItem[];
 }
 
 export interface PlacedOrder {

@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+export type CartSource = "MENU" | "PROMO" | "CUSTOM";
+
 export interface CartItem {
   id: string; // composite: itemId-variant-toppings-note
   name: string;
@@ -13,6 +15,12 @@ export interface CartItem {
   itemId?: string;
   variantId?: string;
   toppingIds?: string[];
+  // Source attribution — every line must be traceable to MENU / PROMO / CUSTOM
+  source?: CartSource;
+  promoId?: string;
+  promoTitle?: string;
+  crustId?: string;
+  crustName?: string;
 }
 
 interface CartStore {

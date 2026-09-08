@@ -9,16 +9,19 @@ import InstaStrip from "@/components/InstaStrip";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
 import PizzaBuilder from "@/components/PizzaBuilder";
-import { fetchBlogPostsServer, fetchMenuItemsServer } from "@/lib/api-server";
+import { fetchBlogPostsServer, fetchBranchesServer, fetchCrustsServer, fetchMenuItemsServer, fetchPromosServer } from "@/lib/api-server";
 
 // Fresh from the backend on every request — dashboard edits appear immediately.
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [bestsellers, featured, posts] = await Promise.all([
+  const [promos, bestsellers, featured, posts, branches, crusts] = await Promise.all([
+    fetchPromosServer(),
     fetchMenuItemsServer({ bestseller: true }),
     fetchMenuItemsServer({ featured: true }),
     fetchBlogPostsServer(6),
+    fetchBranchesServer(),
+    fetchCrustsServer(),
   ]);
 
   return (
@@ -28,8 +31,8 @@ export default async function Home() {
         <Hero />
       </div>
       <main>
-        <PromoBanners />
-        <PizzaBuilder />
+        <PromoBanners initialPromos={promos} />
+        <PizzaBuilder crusts={crusts} />
         <SlowFastFood />
         <MenuShowcase
           kicker="Fan favourites, straight from the oven"
@@ -42,7 +45,7 @@ export default async function Home() {
           items={featured.slice(0, 4)}
           tone="paper-deep"
         />
-        <Locations />
+        <Locations branches={branches} />
         <Journal initialPosts={posts} />
         <InstaStrip />
       </main>

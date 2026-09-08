@@ -1,9 +1,12 @@
 "use client";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { LOCATIONS } from "@/lib/locations";
+import type { ApiBranch } from "@/lib/api-server";
+import { mockBranches } from "@/lib/locations-fallback";
 
-export default function Locations() {
+export default function Locations({ branches }: { branches?: ApiBranch[] }) {
+  const locs = branches && branches.length ? branches : mockBranches;
+
   return (
     <section className="border-t-[3px] border-ink bg-paper">
       <div className="mx-auto max-w-[1440px] px-4 py-16 lg:px-10 lg:py-28">
@@ -25,9 +28,9 @@ export default function Locations() {
         </motion.div>
 
         <div className="mt-12 border-t border-rule">
-          {LOCATIONS.map((loc, i) => (
+          {locs.map((loc, i) => (
             <motion.div
-              key={loc.name}
+              key={loc.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -45,11 +48,11 @@ export default function Locations() {
                     {loc.name}
                   </h3>
                   <p className="mt-1 font-mono text-[0.58rem] tracking-[0.2em] text-ink-faint">
-                    {loc.tagline.toUpperCase()}
+                    {(loc.tagline ?? "").toUpperCase()}
                   </p>
                 </div>
                 <span className="hidden font-mono text-[0.6rem] tracking-[0.15em] text-ink-soft lg:block">
-                  {loc.hours}
+                  {loc.hours ?? "10:00 – 22:00"}
                 </span>
                 <span className="font-mono text-[0.62rem] tracking-[0.2em] text-tomato transition group-hover:translate-x-2">
                   VIEW →

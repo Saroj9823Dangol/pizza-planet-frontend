@@ -1,13 +1,15 @@
-"use client";
-
-import { notFound, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
 import AnnouncementBar from "@/components/AnnouncementBar";
-import { LOCATIONS, getLocation } from "@/lib/locations";
+import { fetchBranchesServer } from "@/lib/api-server";
+import { mockBranches } from "@/lib/locations-fallback";
+import type { ApiBranch } from "@/lib/api-server";
+
+export const dynamic = "force-dynamic";
 
 const ESTABLISHED: Record<string, string> = {
   baneshwor: "2022",
@@ -15,14 +17,40 @@ const ESTABLISHED: Record<string, string> = {
   lakeside: "2024",
 };
 
-export default function LocationPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const loc = typeof slug === "string" ? getLocation(slug) : undefined;
+async function getBranches(): Promise<ApiBranch[]> {
+  const fetched = await fetchBranchesServer();
+  return fetched.length ? fetched : mockBranches;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const branches = await getBranches();
+  const loc = branches.find((b) => b.slug === slug);
+  if (!loc) return {};
+  return {
+    title: `${loc.name} Pizzeria — Pizza Planet`,
+    description: loc.kitchenNote ?? `${loc.name} Pizza Planet — same dough, same warm welcome, its own neighbourhood rhythm.`,
+    openGraph: {
+      title: `${loc.name} — Pizza Planet`,
+      description: loc.kitchenNote ?? undefined,
+      images: loc.heroImage ? [loc.heroImage] : undefined,
+    },
+  };
+}
+
+export default async function LocationPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const branches = await getBranches();
+  const loc = branches.find((b) => b.slug === slug);
 
   if (!loc) return notFound();
 
-  const others = LOCATIONS.filter((location) => location.slug !== loc.slug);
-  const locationNumber = String(LOCATIONS.findIndex((location) => location.slug === loc.slug) + 1).padStart(2, "0");
+  const others = branches.filter((location) => location.slug !== loc.slug);
+  const locationNumber = String(branches.findIndex((location) => location.slug === loc.slug) + 1).padStart(2, "0");
+  const heroImage = loc.heroImage || "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1400&q=85";
+  const storyImage = loc.storyImage || "https://images.unsplash.com/photo-1579751626657-72bc17010498?w=1200&q=85";
+  const description = loc.description?.length ? loc.description : [loc.kitchenNote ?? ""].filter(Boolean);
+  const features = loc.features?.length ? loc.features : ["Walk-ins welcome", "Fresh dough daily", "Eat your crusts"];
 
   return (
     <>
@@ -37,23 +65,18 @@ export default function LocationPage() {
               <h1>{loc.name}<span>+</span></h1>
               <p className="fm-location-detail-lede">{loc.kitchenNote}</p>
             </div>
-            <div className="fm-location-detail-index" aria-label={`Pizzeria ${locationNumber} of ${LOCATIONS.length}`}>
+            <div className="fm-location-detail-index" aria-label={`Pizzeria ${locationNumber} of ${branches.length}`}>
               <strong>{locationNumber}</strong>
-              <span>/ {String(LOCATIONS.length).padStart(2, "0")}</span>
+              <span>/ {String(branches.length).padStart(2, "0")}</span>
             </div>
           </div>
 
-          <motion.div
-            className="fm-location-detail-visual fm-organic-a"
-            initial={{ opacity: 0, scale: .96, rotate: -1.5 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: .8, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <div className="fm-location-detail-visual fm-organic-a">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={loc.heroImage} alt={`${loc.name} Pizza Planet pizzeria`} />
+            <img src={heroImage} alt={`${loc.name} Pizza Planet pizzeria`} />
             <div className="fm-location-detail-image-shade" />
             <span className="fm-location-detail-image-note">THE ORIGINAL<br />OVEN ✦</span>
-          </motion.div>
+          </div>
 
           <div className="fm-location-detail-stamp" aria-hidden="true">WOOD<br />FIRED<br /><b>DAILY</b></div>
         </section>
@@ -69,24 +92,24 @@ export default function LocationPage() {
           </div>
           <div className="fm-location-fact">
             <span>OPEN DAILY</span>
-            <p>{loc.hours}<br />{loc.phone}</p>
+            <p>{loc.hours ?? "10:00 – 22:00"}<br />{loc.phone}</p>
           </div>
           <div className="fm-location-fact">
             <span>ROOM FOR</span>
-            <p>{loc.seats} hungry people<br />inside & outside</p>
+            <p>{loc.seats ?? "—"} hungry people<br />inside & outside</p>
           </div>
         </section>
 
         <section className="fm-location-detail-story fm-shell fm-wave-section fm-wave-section--paper">
           <div className="fm-location-detail-story-image fm-organic-c">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={loc.storyImage} alt={`${loc.name} oven and dining room`} />
+            <img src={storyImage} alt={`${loc.name} oven and dining room`} />
             <span>24H<br />DOUGH<br />✦</span>
           </div>
           <div className="fm-location-detail-story-copy">
             <p className="fm-kicker">A little more than a restaurant.</p>
             <h2>The first oven.<br /><em>Still the warmest.</em></h2>
-            {loc.description.map((paragraph) => (
+            {description.map((paragraph) => (
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
             <div className="fm-button-row">
@@ -106,7 +129,7 @@ export default function LocationPage() {
               <span className="fm-location-detail-arrow">→</span>
             </div>
             <div className="fm-location-feature-grid">
-              {loc.features.map((feature, index) => (
+              {features.map((feature, index) => (
                 <div className="fm-location-feature-card" key={feature}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{feature}</strong>
@@ -142,7 +165,7 @@ export default function LocationPage() {
                 <Link key={other.slug} href={`/locations/${other.slug}`} className="fm-location-more-card">
                   <span className="fm-location-more-image fm-organic-b">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={other.heroImage} alt={other.name} />
+                    <img src={other.heroImage || "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=85"} alt={other.name} />
                   </span>
                   <span className="fm-location-more-copy">
                     <small>{other.tagline}</small>

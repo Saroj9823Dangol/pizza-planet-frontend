@@ -55,6 +55,7 @@ export default function AddToCartModal({
       itemId: item.id,
       variantId: selectedVariantId,
       toppingIds: selectedToppings.length ? selectedToppings : undefined,
+      source: "MENU",
     });
     onClose();
     setTimeout(() => toggleCart(), 250);

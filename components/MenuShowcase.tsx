@@ -5,6 +5,14 @@ import Link from "next/link";
 import AddToCartModal from "./AddToCartModal";
 import { ApiMenuItem, rs } from "@/lib/api";
 
+function priceOf(item: ApiMenuItem): string {
+  if (item.variants.length > 1) {
+    const prices = item.variants.map((v) => v.price);
+    return `From ${rs(Math.min(...prices))}`;
+  }
+  return rs(item.basePrice);
+}
+
 export default function MenuShowcase({
   kicker,
   title,
@@ -36,55 +44,36 @@ export default function MenuShowcase({
           </Link>
         </div>
 
-        <ul className="divide-y divide-rule border-y border-rule">
+        <div className="fm-showcase-grid">
           {items.map((item, i) => (
-            <motion.li
+            <motion.button
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
+              type="button"
+              onClick={() => setModalItem(item)}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.06 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.4, delay: (i % 4) * 0.06 }}
+              className="fm-showcase-card"
             >
-              <button
-                type="button"
-                onClick={() => setModalItem(item)}
-                className="group flex w-full items-start gap-5 py-7 text-left transition hover:bg-cream"
-              >
-                <span className="mt-1 font-serif text-2xl font-light text-ink-faint/70 transition group-hover:text-tomato">
-                  {String(i + 1).padStart(2, "0")}
+              <span className={`fm-showcase-image fm-organic-${String.fromCharCode(97 + (i % 3))}`}>
+                {item.image ? <img src={item.image} alt={item.name} /> : null}
+                {item.isBestseller && <small className="fm-showcase-badge">Favourite</small>}
+              </span>
+              <span className="fm-showcase-body">
+                <span className="fm-showcase-name">
+                  {item.name}
+                  {item.isVeg && <span className="fm-veg-dot" aria-label="Veg" />}
                 </span>
-                <span className="flex-1">
-                  <span className="flex flex-wrap items-baseline gap-x-3">
-                    <span className="font-serif text-xl font-semibold text-ink lg:text-2xl">
-                      {item.name}
-                    </span>
-                    {item.isVeg && (
-                      <span className="inline-block size-2.5 rounded-full bg-basil" />
-                    )}
-                  </span>
-                  {item.description && (
-                    <span className="mt-1 block max-w-[46ch] font-sans text-[0.82rem] leading-relaxed text-ink-soft">
-                      {item.description}
-                    </span>
-                  )}
+                <span className="fm-showcase-desc">{item.description || "Made fresh to order."}</span>
+                <span className="fm-showcase-foot">
+                  <strong className="fm-showcase-price">{priceOf(item)}</strong>
+                  <span className="fm-showcase-add" aria-hidden="true">+</span>
                 </span>
-                <span className="shrink-0 text-right">
-                  <span className="block font-mono text-sm font-bold text-tomato">
-                    {rs(item.basePrice)}
-                    {item.variants.length > 1 && (
-                      <span className="block text-[0.55rem] font-normal text-ink-faint">
-                        {item.variants.length} SIZES
-                      </span>
-                    )}
-                  </span>
-                  <span className="mt-2 inline-flex size-8 items-center justify-center rounded-full border-[1.5px] border-ink font-sans text-base leading-none text-ink transition group-hover:bg-tomato group-hover:text-white">
-                    +
-                  </span>
-                </span>
-              </button>
-            </motion.li>
+              </span>
+            </motion.button>
           ))}
-        </ul>
+        </div>
 
         <p className="mt-6 font-mono text-[0.55rem] tracking-[0.18em] text-ink-faint">
           ✦ PRICES INCLUSIVE OF KITCHEN LOVE · LIVE FROM THE PASS
