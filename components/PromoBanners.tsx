@@ -74,13 +74,19 @@ export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPro
             const orderable = Boolean(promo.menuItemId && promo.price !== null);
             return <article key={promo.id} className={`fm-offer-ticket ${index % 2 ? "fm-offer-ticket--tilt" : ""}`}>
               <div className="fm-offer-ticket-art">{promo.image ? <img src={promo.image} alt="" /> : null}<span>{String(index + 1).padStart(2, "0")}</span></div>
-              <div className="fm-offer-ticket-copy"><p className="fm-kicker">{promo.eyebrow}</p><h4>{promo.title}</h4><p>{promo.body}</p><PromoPrice promo={promo} />{orderable ? <PromoAddButton promo={promo} /> : <Link href={promo.ctaHref || "/order"} className="fm-outline-button fm-outline-button--red">{promo.ctaText}</Link>}</div>
+              <div className="fm-offer-ticket-copy"><div className="fm-offer-ticket-label">LIMITED TIME <b>{discountPercent(promo)}{discountPercent(promo) ? "% OFF" : "DEAL"}</b></div><p className="fm-kicker">{promo.eyebrow}</p><h4>{promo.title}</h4><p>{promo.body}</p><PromoPrice promo={promo} />{orderable ? <PromoAddButton promo={promo} /> : <Link href={promo.ctaHref || "/order"} className="fm-outline-button fm-outline-button--red">{promo.ctaText}</Link>}</div>
             </article>;
           })}
         </div>
       </div> : null}
     </section>
   );
+}
+
+function discountPercent(promo: ApiPromo): number | null {
+  const reference = promo.originalPrice ?? promo.menuItem?.basePrice ?? null;
+  if (!promo.price || !reference || reference <= promo.price) return null;
+  return Math.round(((reference - promo.price) / reference) * 100);
 }
 
 function PromoPrice({ promo }: { promo: ApiPromo }) {

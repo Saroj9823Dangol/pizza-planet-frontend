@@ -339,6 +339,8 @@ export interface ApiPizzaBase {
   id: string;
   name: string;
   note: string | null;
+  /** Independent custom-builder starting price in paisa. */
+  price: number;
   menuItemId: string;
   isActive: boolean;
   sortOrder: number;

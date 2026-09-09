@@ -93,6 +93,7 @@ export default function TodaysSpecial() {
           {specials
             ? specials.slice(0, 4).map((item, i) => {
                 const price = item.variants?.[0]?.price ?? item.basePrice;
+                const hasPrice = Number.isFinite(price) && price > 0;
                 return (
                   <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
@@ -152,14 +153,14 @@ export default function TodaysSpecial() {
                       {item.name}
                     </div>
 
-                    <div style={{
+                    {hasPrice ? <div style={{
                       fontFamily: "Righteous, sans-serif",
                       fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
                       color: "#f4a261",
                       marginBottom: "1rem",
                     }}>
                       Rs. {Math.round(npr(price)).toLocaleString()}
-                    </div>
+                    </div> : <div style={{ color: "#8a8271", fontFamily: "Space Mono, monospace", fontSize: "0.62rem", marginBottom: "1rem" }}>Price available in menu</div>}
 
                     <div style={{
                       fontFamily: "Space Mono, monospace",
@@ -223,14 +224,14 @@ export default function TodaysSpecial() {
                     {item.name}
                   </div>
 
-                  <div style={{
+                  {item.price ? <div style={{
                     fontFamily: "Righteous, sans-serif",
                     fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
                     color: "#f4a261",
                     marginBottom: "1rem",
                   }}>
                     Rs. {item.price}
-                  </div>
+                  </div> : <div style={{ color: "#8a8271", fontFamily: "Space Mono, monospace", fontSize: "0.62rem", marginBottom: "1rem" }}>Price available in menu</div>}
 
                   <div style={{
                     fontFamily: "Space Mono, monospace",

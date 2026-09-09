@@ -74,7 +74,10 @@ export default function PizzaBuilder({
   const selectedCrust = crusts.find((crust) => crust.id === crustId) ?? crusts[0];
   const toppings = useMemo(() => (selectedItem?.toppings ?? []).map((entry) => entry.topping), [selectedItem]);
   const toppingTotal = selectedToppingIds.reduce((sum, id) => sum + (toppings.find((topping) => topping.id === id)?.price ?? 0), 0);
-  const basePrice = selectedItem?.basePrice ?? 0;
+  // The builder has its own catalog price. The linked menu item is only the
+  // recipe/image/topping source and must never make a custom pizza inherit the
+  // price of the whole menu product.
+  const basePrice = selectedBase?.price ?? 0;
   const sizeDelta = selectedSize?.priceDelta ?? 0;
   const crustDelta = selectedCrust?.priceDelta ?? 0;
   const unitPrice = basePrice + sizeDelta + crustDelta + toppingTotal;
@@ -143,7 +146,7 @@ export default function PizzaBuilder({
 
         <div className="fm-builder-controls">
           <div className="fm-builder-step"><span>01</span><div><p className="fm-kicker">Choose your base</p><div className="fm-builder-pizza-options">
-            {bases.length ? bases.map((base) => <button key={base.id} type="button" onClick={() => changeBase(base.id)} aria-pressed={selectedBase?.id === base.id} className={selectedBase?.id === base.id ? "fm-builder-option fm-builder-option--active" : "fm-builder-option"}>{base.name}<small>{base.note}</small></button>) : <p className="fm-builder-empty">No builder bases are live yet.</p>}
+            {bases.length ? bases.map((base) => <button key={base.id} type="button" onClick={() => changeBase(base.id)} aria-pressed={selectedBase?.id === base.id} className={selectedBase?.id === base.id ? "fm-builder-option fm-builder-option--active" : "fm-builder-option"}>{base.name}<small>{base.note} · from {rs(base.price)}</small></button>) : <p className="fm-builder-empty">No builder bases are live yet.</p>}
           </div></div></div>
 
           <div className="fm-builder-step"><span>02</span><div><p className="fm-kicker">Pick your size</p><div className="fm-builder-pizza-options">
