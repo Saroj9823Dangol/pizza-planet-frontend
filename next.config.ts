@@ -1,9 +1,13 @@
+import { loadEnvConfig } from "@next/env";
 import type { NextConfig } from "next";
 
+// .env is not always in process.env while next.config is evaluated (the
+// launchd/Vercel process may not inject it), so load it explicitly. On Vercel
+// there is no .env file and API_PROXY_TARGET stays unset, which falls back to
+// the real backend below — the deployed build keeps working with zero config.
+loadEnvConfig(process.cwd());
+
 // Proxy /api/* to the NestJS backend — avoids CORS and works in any environment.
-// NOTE: the .env file is NOT committed, so on Vercel API_PROXY_TARGET is unset.
-// In production we must fall back to the real backend, otherwise every fetch
-// points at localhost:3001 and the site silently renders mock data.
 const API_TARGET =
   process.env.API_PROXY_TARGET ??
   (process.env.NODE_ENV === "production"

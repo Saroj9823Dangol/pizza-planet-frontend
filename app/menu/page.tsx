@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import FullMenu from "@/components/FullMenu";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
-import { fetchCategoriesServer, fetchMenuItemsServer } from "@/lib/api-server";
+import { fetchCategoriesServer, fetchMenuPageServer } from "@/lib/api-server";
 import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
 
@@ -30,11 +30,16 @@ export const metadata: Metadata = {
   },
 };
 
+const MENU_PAGE_SIZE = 24;
+
 export default async function MenuPage() {
-  const [items, categories] = await Promise.all([
-    fetchMenuItemsServer(),
+  // First page is server-rendered for SEO; the rest load via infinite scroll
+  // in FullMenu as the visitor scrolls.
+  const [pageData, categories] = await Promise.all([
+    fetchMenuPageServer(1),
     fetchCategoriesServer(),
   ]);
+  const items = pageData.items;
 
   const menuSchema = {
     "@context": "https://schema.org",

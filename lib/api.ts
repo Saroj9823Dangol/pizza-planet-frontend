@@ -94,6 +94,42 @@ export async function fetchMenuItems(q: MenuQuery = {}): Promise<ApiMenuItem[]> 
   return fallbackItems(q);
 }
 
+export interface MenuPageMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+export interface MenuPageResult {
+  items: ApiMenuItem[];
+  meta: MenuPageMeta;
+}
+
+/** One paginated slice of the menu — used by the menu page's infinite scroll. */
+export async function fetchMenuPage(page = 1, limit = 24): Promise<MenuPageResult> {
+  const data = await getJson<{ items: ApiMenuItem[]; meta: MenuPageMeta }>(
+    `/api/menu-items?page=${page}&limit=${limit}`,
+  );
+  if (data?.items) return { items: data.items, meta: data.meta };
+  // Offline fallback: slice the bundled mock menu.
+  const all = fallbackItems({});
+  const start = (page - 1) * limit;
+  return {
+    items: all.slice(start, start + limit),
+    meta: {
+      page,
+      limit,
+      total: all.length,
+      totalPages: Math.max(1, Math.ceil(all.length / limit)),
+      hasNext: start + limit < all.length,
+      hasPrev: page > 1,
+    },
+  };
+}
+
 export async function fetchCategories(): Promise<ApiCategory[]> {
   const data = await getJson<ApiCategory[]>("/api/categories");
   if (data?.length) return data;

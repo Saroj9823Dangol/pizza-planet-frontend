@@ -86,6 +86,16 @@ export default async function JournalArticlePage({
     ? `${SITE_URL}/og/blog/${encodeURIComponent(slug)}`
     : OG_DEFAULT_IMAGE;
 
+  const readingMinutes = Math.max(1, Math.ceil(plainText.split(" ").length / 200));
+
+  const publishedLabel = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+
   const blogPostingSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -131,28 +141,34 @@ export default async function JournalArticlePage({
       <main className="fm-article-page">
         <article className="fm-shell fm-article-shell">
           <header className="fm-article-header">
-            <Link href="/journal" className="fm-read-link">
-              ← The journal
-            </Link>
-            <p className="fm-kicker">{post.tags?.[0] ?? "Kitchen notes"}</p>
+            <div className="fm-article-topline">
+              <Link href="/journal" className="fm-read-link">
+                ← The Journal
+              </Link>
+              <span className="fm-article-stamp">From the kitchen</span>
+            </div>
+            <p className="fm-article-kicker">{post.tags?.[0] ?? "Kitchen notes"}</p>
             <h1>{post.title}</h1>
-            <p className="fm-article-meta">
-              By {post.author?.name ?? "Pizza Planet"}
-              {post.publishedAt
-                ? ` · ${new Date(post.publishedAt).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}`
-                : ""}
+            <p className="fm-article-byline">
+              <span>By {post.author?.name ?? "Pizza Planet"}</span>
+              {publishedLabel && (
+                <>
+                  <span className="fm-byline-dot" aria-hidden="true">·</span>
+                  <span>{publishedLabel}</span>
+                </>
+              )}
+              <span className="fm-byline-dot" aria-hidden="true">·</span>
+              <span>{readingMinutes} min read</span>
             </p>
           </header>
+
           {post.coverImage && (
             <div className="fm-article-image fm-organic-b">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={post.coverImage} alt={post.title} />
             </div>
           )}
+
           {rich ? (
             <div
               className="fm-article-copy"
@@ -168,12 +184,16 @@ export default async function JournalArticlePage({
                 ))}
             </div>
           )}
-          <div className="fm-article-end">
-            <p>Hungry by now?</p>
+
+          <footer className="fm-article-end">
+            <p className="fm-article-end-line">Hungry by now?</p>
             <Link href="/menu" className="fm-outline-button fm-outline-button--solid">
               See the menu
             </Link>
-          </div>
+            <Link href="/journal" className="fm-article-end-back">
+              More stories from the journal →
+            </Link>
+          </footer>
         </article>
       </main>
       <Footer />

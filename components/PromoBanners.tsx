@@ -34,7 +34,7 @@ export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPro
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="fm-promo-eyebrow">
-                <span className="fm-squiggle" aria-hidden="true">↗</span>
+                {/* <span className="fm-squiggle" aria-hidden="true">↗</span> */}
                 {promo.eyebrow}
               </div>
               <div className={`fm-promo-image ${SHAPES[index % SHAPES.length]}`}>

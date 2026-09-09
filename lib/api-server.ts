@@ -55,7 +55,7 @@ export async function fetchMenuItemsServer(q: MenuQueryServer = {}): Promise<Api
   if (q.search) params.set("search", q.search);
   if (q.bestseller) params.set("bestseller", "true");
   if (q.featured) params.set("featured", "true");
-  params.set("limit", String(q.limit ?? 100));
+  params.set("limit", String(q.limit ?? 300));
 
   const data = await getJson<{ items: ApiMenuItem[] }>(`/api/menu-items?${params.toString()}`);
   if (data?.items?.length) return data.items;
@@ -64,6 +64,50 @@ export async function fetchMenuItemsServer(q: MenuQueryServer = {}): Promise<Api
   return mockItems
     .filter((m) => (q.bestseller ? m.bestseller : true))
     .map(mockToApiItem);
+}
+
+export interface MenuPageMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+export interface MenuPageResult {
+  items: ApiMenuItem[];
+  meta: MenuPageMeta;
+}
+
+/**
+ * One paginated slice of the menu — used by /menu for infinite scrolling.
+ * The first page is server-rendered (SEO); later pages are fetched on the
+ * client and appended as the visitor scrolls.
+ */
+export async function fetchMenuPageServer(
+  page = 1,
+): Promise<MenuPageResult> {
+  const data = await getJson<{ items: ApiMenuItem[]; meta: MenuPageMeta }>(
+    `/api/menu-items?page=${page}`,
+  );
+  if (data?.items?.length || (data?.items && page === 1)) {
+    return { items: data.items ?? [], meta: data.meta };
+  }
+  // Graceful fallback: slice the bundled mock menu.
+  const all = mockItems.map(mockToApiItem);
+  const start = page - 1;
+  return {
+    items: all,
+    meta: {
+      page,
+      limit: 24,
+      total: all.length,
+      totalPages: Math.max(1, Math.ceil(all.length / all.length)),
+      hasNext: start + all.length < all.length,
+      hasPrev: page > 1,
+    },
+  };
 }
 
 export async function fetchCategoriesServer(): Promise<ApiCategory[]> {
