@@ -8,6 +8,8 @@ import AnnouncementBar from "@/components/AnnouncementBar";
 import { fetchBranchesServer } from "@/lib/api-server";
 import { mockBranches } from "@/lib/locations-fallback";
 import type { ApiBranch } from "@/lib/api-server";
+import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
+import JsonLd from "@/components/JsonLd";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +35,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${loc.name} — Pizza Planet`,
       description: loc.kitchenNote ?? undefined,
-      images: loc.heroImage ? [loc.heroImage] : undefined,
+      url: `${SITE_URL}/locations/${slug}`,
+      // Hero image served through the storefront proxy (Unsplash blocks crawlers).
+      images: [
+        {
+          url: loc.heroImage ? `${SITE_URL}/og/branch/${encodeURIComponent(slug)}` : OG_DEFAULT_IMAGE,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   };
 }
@@ -45,6 +55,45 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
 
   if (!loc) return notFound();
 
+  const hours = (loc.hours ?? "10:00 – 22:00").replace(/\s*[–-]\s*/, "-");
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    name: `${loc.name} Pizza Planet`,
+    description: loc.kitchenNote ?? undefined,
+    url: `${SITE_URL}/locations/${loc.slug}`,
+    image: loc.heroImage
+      ? `${SITE_URL}/og/branch/${encodeURIComponent(loc.slug)}`
+      : OG_DEFAULT_IMAGE,
+    servesCuisine: ["Pizza", "Italian", "Momo", "Fast Food"],
+    priceRange: "$$",
+    telephone: loc.phone ?? undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: loc.address ?? undefined,
+      addressLocality: loc.city ?? "Kathmandu",
+      addressCountry: "NP",
+    },
+    openingHours: `Mo-Su ${hours}`,
+    acceptsReservations: "True",
+    menu: `${SITE_URL}/menu`,
+    parentOrganization: {
+      "@type": "Restaurant",
+      name: "Pizza Planet",
+      url: SITE_URL,
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Our Pizzerias", item: `${SITE_URL}/locations` },
+      { "@type": "ListItem", position: 3, name: loc.name, item: `${SITE_URL}/locations/${loc.slug}` },
+    ],
+  };
+
   const others = branches.filter((location) => location.slug !== loc.slug);
   const locationNumber = String(branches.findIndex((location) => location.slug === loc.slug) + 1).padStart(2, "0");
   const heroImage = loc.heroImage || "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1400&q=85";
@@ -54,6 +103,8 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
+      <JsonLd data={localBusinessSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <AnnouncementBar />
       <Navbar />
       <main className="fm-location-detail">

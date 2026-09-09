@@ -2,23 +2,64 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
+import type { Metadata } from "next";
 import { fetchBranchesServer } from "@/lib/api-server";
 import { mockBranches } from "@/lib/locations-fallback";
+import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
+import JsonLd from "@/components/JsonLd";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Our Pizzerias — Pizza Planet",
   description:
     "Every Pizza Planet has the same dough, the same warm welcome, and its own neighbourhood rhythm. Find your oven — Baneshwor, Jhamsikhel, Lakeside and more.",
+  openGraph: {
+    title: "Our Pizzerias — Pizza Planet",
+    description: "Find your nearest Pizza Planet — Baneshwor, Jhamsikhel, Lakeside and more.",
+    type: "website",
+    url: `${SITE_URL}/locations`,
+    images: [OG_DEFAULT_IMAGE],
+  },
+  alternates: { canonical: `${SITE_URL}/locations` },
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Pizzerias — Pizza Planet",
+    description: "Find your nearest Pizza Planet oven.",
+    images: [OG_DEFAULT_IMAGE],
+  },
 };
 
 export default async function LocationsPage() {
   const fetched = await fetchBranchesServer();
   const locs = fetched.length ? fetched : mockBranches;
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Pizza Planet pizzerias",
+    itemListElement: locs.map((location, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: `${location.name} Pizza Planet`,
+      url: `${SITE_URL}/locations/${location.slug}`,
+      image: location.heroImage ?? undefined,
+    })),
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Our Pizzerias", item: `${SITE_URL}/locations` },
+    ],
+  };
+
   return (
     <>
+      <JsonLd data={itemListSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <Navbar />
       <main className="fm-locations-page">
         <section className="fm-locations-intro fm-wave-section fm-wave-section--paper">

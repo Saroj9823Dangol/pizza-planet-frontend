@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
 import JournalArchive from "@/components/JournalArchive";
 import { fetchBlogPostsPageServer } from "@/lib/api-server";
+import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
+import JsonLd from "@/components/JsonLd";
 
 // Fresh from the backend on every request — dashboard edits appear immediately.
 export const dynamic = "force-dynamic";
@@ -18,6 +20,15 @@ export const metadata: Metadata = {
     title: "The Journal — Pizza Planet",
     description: "Recipes, stories, and a few thoughts from the Pizza Planet kitchen.",
     type: "website",
+    url: `${SITE_URL}/journal`,
+    images: [OG_DEFAULT_IMAGE],
+  },
+  alternates: { canonical: `${SITE_URL}/journal` },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Journal — Pizza Planet",
+    description: "Recipes, stories, and a few thoughts from the Pizza Planet kitchen.",
+    images: [OG_DEFAULT_IMAGE],
   },
 };
 
@@ -53,8 +64,21 @@ export default async function JournalPage({
   if (page > totalPages) redirect(`/journal?page=${totalPages}`);
   const current = page;
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "The Journal", item: `${SITE_URL}/journal` },
+    ],
+  };
+
   return (
     <>
+      {/* Pagination signals for crawlers. */}
+      {meta.hasPrev && <link rel="prev" href={`/journal?page=${current - 1}`} />}
+      {meta.hasNext && <link rel="next" href={`/journal?page=${current + 1}`} />}
+      <JsonLd data={breadcrumbSchema} />
       <Navbar />
       <main className="fm-journal-page">
         <header className="fm-journal-page-header">

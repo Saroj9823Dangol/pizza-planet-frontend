@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
 import { fetchBlogPostServer } from "@/lib/api-server";
+import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
+import JsonLd from "@/components/JsonLd";
 
 // Fresh from the backend on every request — dashboard edits appear immediately.
 export const dynamic = "force-dynamic";
@@ -30,7 +32,13 @@ export async function generateMetadata({
 
   const title = post.metaTitle || post.title;
   const description = post.metaDescription || post.excerpt || undefined;
-  const image = post.ogImage || post.coverImage || undefined;
+
+  // Covers are served through the storefront's own /og/blog/<slug> proxy so
+  // social crawlers always get a reachable image (Unsplash blocks them).
+  const hasImage = Boolean(post.ogImage || post.coverImage);
+  const image = hasImage
+    ? `${SITE_URL}/og/blog/${encodeURIComponent(slug)}`
+    : OG_DEFAULT_IMAGE;
 
   return {
     title,
@@ -38,18 +46,21 @@ export async function generateMetadata({
     keywords: post.keywords
       ? post.keywords.split(",").map((k) => k.trim()).filter(Boolean)
       : undefined,
-    alternates: post.canonicalUrl ? { canonical: post.canonicalUrl } : undefined,
+    alternates: {
+      canonical: post.canonicalUrl || `${SITE_URL}/journal/${slug}`,
+    },
     openGraph: {
       title,
       description,
       type: "article",
-      images: image ? [image] : undefined,
+      url: `${SITE_URL}/journal/${slug}`,
+      images: [{ url: image, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: image ? [image] : undefined,
+      images: [image],
     },
   };
 }
@@ -66,8 +77,56 @@ export default async function JournalArticlePage({
   const content = post.content || post.excerpt || "";
   const rich = isHtml(content);
 
+  const plainText = content
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const image = post.ogImage || post.coverImage
+    ? `${SITE_URL}/og/blog/${encodeURIComponent(slug)}`
+    : OG_DEFAULT_IMAGE;
+
+  const blogPostingSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.metaTitle || post.title,
+    description: post.metaDescription || post.excerpt || undefined,
+    image: image,
+    datePublished: post.publishedAt ?? undefined,
+    dateModified: post.publishedAt ?? undefined,
+    keywords: post.keywords || post.tags?.join(", ") || undefined,
+    articleSection: post.tags?.[0] ?? undefined,
+    wordCount: plainText ? plainText.split(" ").length : undefined,
+    mainEntityOfPage: `${SITE_URL}/journal/${slug}`,
+    author: {
+      "@type": "Person",
+      name: post.author?.name ?? "Pizza Planet",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Pizza Planet",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/logo/logo.jpg`,
+      },
+    },
+    articleBody: plainText.slice(0, 4000) || undefined,
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "The Journal", item: `${SITE_URL}/journal` },
+      { "@type": "ListItem", position: 3, name: post.title, item: `${SITE_URL}/journal/${slug}` },
+    ],
+  };
+
   return (
     <>
+      <JsonLd data={blogPostingSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <Navbar />
       <main className="fm-article-page">
         <article className="fm-shell fm-article-shell">
