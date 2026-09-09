@@ -1606,7 +1606,7 @@ body::before {
 .fm-reference-category-copy h3 { margin: 0 0 1rem; font-family: var(--font-sans); font-size: clamp(1.7rem, 3vw, 3rem); font-weight: 850; line-height: .98; letter-spacing: -.065em; }
 .fm-reference-category-copy p { margin: 0; font-family: var(--font-mono); font-size: .75rem; line-height: 1.7; }
 .fm-reference-note { margin-top: 1.5rem !important; color: #766f6b; font-size: .62rem !important; }
-.fm-reference-feature { min-height: 560px; overflow: hidden; }
+.fm-reference-feature { height: 560px; overflow: hidden; }
 .fm-reference-feature img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .fm-reference-item-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: clamp(1rem, 4vw, 4rem); max-width: 1280px; margin: 5rem auto 0; }
 .fm-reference-item { display: block; width: 100%; border: 0; padding: 0; background: transparent; color: var(--ink); text-align: center; cursor: pointer; }
@@ -2280,6 +2280,73 @@ body::before {
 }
 
 .admin .grain-overlay { display: none; }
+
+/* ═══════════════════════════════════════════════════════════
+   HOMEPAGE CAMPAIGN BOARD — offers lead, specials follow
+   ═══════════════════════════════════════════════════════════ */
+.fm-campaigns { position: relative; overflow: hidden; background: var(--paper); color: var(--ink); padding: clamp(4.5rem, 9vw, 9rem) clamp(1rem, 4vw, 4rem); }
+.fm-campaigns::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .42; background-image: radial-gradient(var(--rule) .65px, transparent .65px); background-size: 12px 12px; mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent); }
+.fm-campaigns-shell { position: relative; z-index: 1; max-width: var(--page-max); margin: 0 auto; }
+.fm-campaigns-header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; max-width: 1320px; margin: 0 auto clamp(2.5rem, 5vw, 5rem); }
+.fm-campaigns-header .fm-hand-title { max-width: 8ch; font-size: clamp(3.5rem, 8vw, 8rem); }
+.fm-campaigns-intro { max-width: 28ch; margin: 0 0 .35rem; font-family: var(--font-mono); font-size: .72rem; line-height: 1.75; }
+.fm-offer-board { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(360px, .75fr); gap: clamp(1.2rem, 3vw, 3rem); max-width: 1320px; margin: 0 auto; }
+.fm-offer-lead { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(240px, .95fr); min-height: 430px; overflow: hidden; background: var(--tomato); color: var(--paper); box-shadow: 10px 10px 0 var(--ink); transform: rotate(-1deg); }
+.fm-offer-lead-media { position: relative; min-height: 290px; overflow: hidden; background: var(--tomato-deep); border-radius: 42% 22% 34% 22% / 24% 31% 20% 30%; }
+.fm-offer-lead-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 50%, rgb(163 40 32 / .75)); }
+.fm-offer-lead-media img { display: block; width: 100%; height: 100%; min-height: 290px; object-fit: cover; }
+.fm-offer-placeholder { display: grid; height: 100%; place-items: center; color: var(--mustard); font-size: 7rem; font-family: var(--font-hand); }
+.fm-offer-lead-stamp { position: absolute; right: 1rem; top: 1rem; z-index: 1; display: grid; width: 94px; height: 94px; place-items: center; border: 2px dashed var(--paper); border-radius: 50%; color: var(--paper); font-family: var(--font-mono); font-size: .62rem; font-weight: 700; line-height: 1.15; text-align: center; text-transform: uppercase; transform: rotate(12deg); }
+.fm-offer-lead-copy { display: flex; min-width: 0; flex-direction: column; justify-content: space-between; padding: clamp(1.4rem, 3vw, 2.5rem); }
+.fm-offer-lead-copy .fm-kicker { color: var(--mustard); }
+.fm-offer-lead-copy h3 { max-width: 8ch; margin: 0; font-family: var(--font-hand); font-size: clamp(2.3rem, 4vw, 4.6rem); line-height: .86; letter-spacing: -.04em; text-transform: uppercase; }
+.fm-offer-lead-body { margin: 1.4rem 0; font-family: var(--font-mono); font-size: .7rem; line-height: 1.65; color: rgb(250 245 236 / .82); }
+.fm-offer-lead-bottom { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; }
+.fm-campaign-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: .55rem; margin: .8rem 0 1rem; color: var(--tomato); font-family: var(--font-mono); }
+.fm-campaign-price del { color: var(--ink-faint); font-size: .7rem; text-decoration-thickness: 1px; }
+.fm-campaign-price strong { font-family: var(--font-sans); font-size: 1.45rem; font-weight: 900; letter-spacing: -.05em; }
+.fm-campaign-price span { font-size: .53rem; letter-spacing: .1em; text-transform: uppercase; }
+.fm-campaign-price--compact { margin: .35rem 0 .7rem; }
+.fm-campaign-price--compact strong { font-size: 1.05rem; }
+.fm-offer-lead .fm-campaign-price { color: var(--paper); }
+.fm-offer-lead .fm-campaign-price del { color: rgb(250 245 236 / .65); }
+.fm-offer-lead .fm-campaign-price span { color: var(--mustard); }
+.fm-campaign-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: .65rem; border: 1.5px solid var(--tomato); border-radius: 999px; padding: .7rem 1rem; color: var(--tomato); font-family: var(--font-sans); font-size: .72rem; font-weight: 850; line-height: 1; text-decoration: none; transition: transform .2s ease, background .2s ease, color .2s ease; }
+.fm-campaign-button:hover { background: var(--tomato); color: white; transform: translateY(-2px); }
+.fm-campaign-button--solid { border-color: var(--paper); background: var(--paper); color: var(--tomato); }
+.fm-campaign-button--solid:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.fm-offer-stack { display: flex; min-width: 0; flex-direction: column; gap: 1rem; }
+.fm-offer-row { position: relative; display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 1rem; min-height: 136px; padding: .8rem; border: 1.5px solid var(--ink); background: var(--paper-deep); box-shadow: 4px 4px 0 var(--mustard); }
+.fm-offer-row-image { overflow: hidden; min-height: 120px; aspect-ratio: 1 / 1; background: var(--rule); border-radius: 18% 44% 25% 34% / 22% 26% 31% 38%; }
+.fm-offer-row-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fm-offer-row-image span { display: grid; height: 100%; place-items: center; color: var(--tomato); font-family: var(--font-hand); font-size: 3rem; }
+.fm-offer-row-copy { min-width: 0; }
+.fm-offer-row-topline { display: flex; align-items: center; justify-content: space-between; gap: .5rem; color: var(--tomato); font-family: var(--font-mono); font-size: .5rem; letter-spacing: .08em; text-transform: uppercase; }
+.fm-offer-row-topline span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fm-offer-row-topline b { flex: none; padding: .25rem .35rem; background: var(--tomato); color: white; font-size: .55rem; }
+.fm-offer-row h3 { margin: .4rem 0 0; font-family: var(--font-sans); font-size: 1.2rem; line-height: 1; letter-spacing: -.045em; }
+.fm-offer-row-copy > p { display: -webkit-box; overflow: hidden; margin: .45rem 0; color: var(--ink-soft); font-family: var(--font-mono); font-size: .6rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.fm-offer-row-bottom { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.fm-offer-row-bottom .fm-campaign-button { min-height: 34px; padding: .52rem .7rem; font-size: .62rem; }
+.fm-offer-row-mark { position: absolute; right: .55rem; bottom: .25rem; color: var(--rule); font-family: var(--font-hand); font-size: 2.4rem; line-height: 1; }
+.fm-special-board { max-width: 1320px; margin: clamp(5rem, 10vw, 10rem) auto 0; padding-top: clamp(2rem, 4vw, 4rem); border-top: 1px solid var(--ink); }
+.fm-special-board-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 2.4rem; }
+.fm-special-board-heading h3 { margin: 0; color: var(--tomato); font-family: var(--font-hand); font-size: clamp(3rem, 6vw, 6rem); line-height: .82; text-transform: uppercase; }
+.fm-special-board-heading > p { max-width: 28ch; margin: 0; font-family: var(--font-mono); font-size: .68rem; line-height: 1.65; }
+.fm-special-board-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 4rem); }
+.fm-special-card { min-width: 0; }
+.fm-special-card:nth-child(2) { margin-top: 2.8rem; }
+.fm-special-card:nth-child(3) { margin-top: .8rem; }
+.fm-special-card-image { aspect-ratio: 1.12 / 1; overflow: hidden; background: var(--paper-deep); }
+.fm-special-card-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fm-special-card-image > span { display: grid; height: 100%; place-items: center; color: var(--tomato); font-family: var(--font-hand); font-size: 6rem; }
+.fm-special-card-copy { max-width: 34ch; padding-top: 1rem; }
+.fm-special-card-copy .fm-kicker { margin-bottom: .55rem; }
+.fm-special-card-copy h4 { margin: 0; font-family: var(--font-sans); font-size: clamp(1.25rem, 2vw, 1.8rem); font-weight: 850; line-height: 1; letter-spacing: -.05em; }
+.fm-special-card-copy > p:not(.fm-kicker) { margin: .7rem 0; font-family: var(--font-mono); font-size: .68rem; line-height: 1.6; }
+@media (max-width: 1000px) { .fm-offer-board { grid-template-columns: 1fr; } .fm-offer-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .fm-campaigns-header, .fm-special-board-heading { align-items: start; flex-direction: column; } .fm-offer-lead { grid-template-columns: 1fr; transform: none; } .fm-offer-lead-media { min-height: 260px; max-height: 340px; border-radius: 29% 38% 17% 40% / 28% 22% 34% 25%; } .fm-offer-stack, .fm-special-board-grid { grid-template-columns: 1fr; } .fm-special-card:nth-child(2), .fm-special-card:nth-child(3) { margin-top: 0; } }
+@media (max-width: 460px) { .fm-offer-row { grid-template-columns: 72px minmax(0, 1fr); } .fm-offer-row-image { min-height: 105px; } .fm-offer-row h3 { font-size: 1rem; } .fm-offer-row-bottom { align-items: start; flex-direction: column; } }
 
 @layer utilities {
   .hq-bg-grid {

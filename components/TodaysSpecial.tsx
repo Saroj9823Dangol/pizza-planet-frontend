@@ -153,7 +153,7 @@ export default function TodaysSpecial() {
                       {item.name}
                     </div>
 
-                    {hasPrice ? <div style={{
+                    {hasPrice && Math.round(npr(price)) > 0 ? <div style={{
                       fontFamily: "Righteous, sans-serif",
                       fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
                       color: "#f4a261",
@@ -224,7 +224,7 @@ export default function TodaysSpecial() {
                     {item.name}
                   </div>
 
-                  {item.price ? <div style={{
+                  {item.price && +item.price > 0 ? <div style={{
                     fontFamily: "Righteous, sans-serif",
                     fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
                     color: "#f4a261",

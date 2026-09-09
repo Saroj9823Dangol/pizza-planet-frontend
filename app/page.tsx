@@ -1,17 +1,17 @@
-import Navbar from "@/components/Navbar";
+import CartSidebar from "@/components/CartSidebar";
+import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
+import InstaStrip from "@/components/InstaStrip";
+import Journal from "@/components/Journal";
+import JsonLd from "@/components/JsonLd";
+import Locations from "@/components/Locations";
+import MenuShowcase from "@/components/MenuShowcase";
+import Navbar from "@/components/Navbar";
+import PizzaBuilder from "@/components/PizzaBuilder";
 import PromoBanners from "@/components/PromoBanners";
 import SlowFastFood from "@/components/SlowFastFood";
-import MenuShowcase from "@/components/MenuShowcase";
-import Locations from "@/components/Locations";
-import Journal from "@/components/Journal";
-import InstaStrip from "@/components/InstaStrip";
-import Footer from "@/components/Footer";
-import CartSidebar from "@/components/CartSidebar";
-import PizzaBuilder from "@/components/PizzaBuilder";
-import { fetchBlogPostsServer, fetchBranchesServer, fetchCrustsServer, fetchInstagramServer, fetchMenuItemsServer, fetchPromosServer, fetchPizzaBasesServer, fetchPizzaSizesServer } from "@/lib/api-server";
+import { fetchBlogPostsServer, fetchBranchesServer, fetchCrustsServer, fetchInstagramServer, fetchMenuItemsServer, fetchPizzaBasesServer, fetchPizzaSizesServer, fetchPromosServer } from "@/lib/api-server";
 import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
-import JsonLd from "@/components/JsonLd";
 
 // Fresh from the backend on every request — dashboard edits appear immediately.
 export const dynamic = "force-dynamic";
@@ -122,6 +122,7 @@ export default async function Home() {
       </div>
       <main>
         <PromoBanners initialPromos={promos} />
+        {/* <TodaysSpecial /> */}
         <PizzaBuilder crusts={crusts} bases={bases} sizes={sizes} />
         <SlowFastFood />
         <MenuShowcase

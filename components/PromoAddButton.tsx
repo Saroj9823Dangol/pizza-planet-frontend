@@ -8,7 +8,7 @@ import type { ApiPromo } from "@/lib/api-server";
  * instead of a plain link, so the offer lands in the tray at its promo price
  * and the resulting order line is attributed to PROMO on the backend.
  */
-export default function PromoAddButton({ promo }: { promo: ApiPromo }) {
+export default function PromoAddButton({ promo, className }: { promo: ApiPromo; className?: string }) {
   const addItem = useCartStore((s) => s.addItem);
   const toggleCart = useCartStore((s) => s.toggleCart);
   const [added, setAdded] = useState(false);
@@ -36,9 +36,9 @@ export default function PromoAddButton({ promo }: { promo: ApiPromo }) {
     <button
       type="button"
       onClick={handleAdd}
-      className={`fm-outline-button ${promo.isFeatured ? "fm-outline-button--solid" : ""}`}
+      className={className ?? `fm-outline-button ${promo.isFeatured ? "fm-outline-button--solid" : ""}`}
     >
-      {added ? "Added to tray ✓" : "Add to tray"}
+      {added ? "Added to tray ✓" : "Add to tray"}{!added ? <span aria-hidden="true">↗</span> : null}
     </button>
   );
 }
