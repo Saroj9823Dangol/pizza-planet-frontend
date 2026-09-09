@@ -13,10 +13,18 @@ import { FALLBACK_POSTS, mockToApiItem } from "./api";
 import { menuItems as mockItems } from "./data";
 import { mockBranches } from "./locations-fallback";
 
-// Same target the /api proxy uses (see next.config.ts / proxy.ts).
-// All paths below start with /api (the backend's global prefix), so a
-// trailing /api on the target is normalized away to avoid double-prefixing.
-const API_TARGET = (process.env.API_PROXY_TARGET ?? "http://localhost:3001")
+// Same target the /api proxy uses (see next.config.ts). All paths below start
+// with /api (the backend's global prefix), so a trailing /api on the target is
+// normalized away to avoid double-prefixing.
+// NOTE: the .env file is NOT committed, so on Vercel API_PROXY_TARGET is unset.
+// In production we must fall back to the real backend, otherwise every fetch
+// points at localhost:3001 and the site silently renders mock data.
+const API_TARGET = (
+  process.env.API_PROXY_TARGET ??
+  (process.env.NODE_ENV === "production"
+    ? "https://pizzaplanet.sarojdangol012.com.np"
+    : "http://localhost:3001")
+)
   .replace(/\/+$/, "")
   .replace(/\/api$/, "");
 

@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
 // Proxy /api/* to the NestJS backend — avoids CORS and works in any environment.
-const API_TARGET = process.env.API_PROXY_TARGET ?? "http://localhost:3001";
+// NOTE: the .env file is NOT committed, so on Vercel API_PROXY_TARGET is unset.
+// In production we must fall back to the real backend, otherwise every fetch
+// points at localhost:3001 and the site silently renders mock data.
+const API_TARGET =
+  process.env.API_PROXY_TARGET ??
+  (process.env.NODE_ENV === "production"
+    ? "https://pizzaplanet.sarojdangol012.com.np"
+    : "http://localhost:3001");
 
 const nextConfig: NextConfig = {
   images: {
