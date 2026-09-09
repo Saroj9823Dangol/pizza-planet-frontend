@@ -132,7 +132,8 @@ export interface ApiPromo {
   isFeatured: boolean;
   // Product link — when set the storefront shows "Add to tray" at the promo price
   menuItemId: string | null;
-  price: number | null; // paisa — fixed promo price
+  price: number | null; // paisa — discounted/effective price
+  originalPrice: number | null; // paisa — optional crossed-out reference price
   menuItem?: { id: string; name: string; basePrice: number } | null;
 }
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ApiPromo } from "@/lib/api-server";
 import PromoAddButton from "./PromoAddButton";
+import { rs } from "@/lib/api";
 
 const SHAPES = ["fm-organic-a", "fm-organic-b", "fm-organic-c"] as const;
 
@@ -47,6 +48,7 @@ export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPro
               <div className="fm-promo-copy">
                 <h2>{promo.title}</h2>
                 <p>{promo.body}</p>
+                <PromoPrice promo={promo} />
                 {orderable ? (
                   <PromoAddButton promo={promo} />
                 ) : (
@@ -72,11 +74,26 @@ export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPro
             const orderable = Boolean(promo.menuItemId && promo.price !== null);
             return <article key={promo.id} className={`fm-offer-ticket ${index % 2 ? "fm-offer-ticket--tilt" : ""}`}>
               <div className="fm-offer-ticket-art">{promo.image ? <img src={promo.image} alt="" /> : null}<span>{String(index + 1).padStart(2, "0")}</span></div>
-              <div className="fm-offer-ticket-copy"><p className="fm-kicker">{promo.eyebrow}</p><h4>{promo.title}</h4><p>{promo.body}</p>{orderable ? <PromoAddButton promo={promo} /> : <Link href={promo.ctaHref || "/order"} className="fm-outline-button fm-outline-button--red">{promo.ctaText}</Link>}</div>
+              <div className="fm-offer-ticket-copy"><p className="fm-kicker">{promo.eyebrow}</p><h4>{promo.title}</h4><p>{promo.body}</p><PromoPrice promo={promo} />{orderable ? <PromoAddButton promo={promo} /> : <Link href={promo.ctaHref || "/order"} className="fm-outline-button fm-outline-button--red">{promo.ctaText}</Link>}</div>
             </article>;
           })}
         </div>
       </div> : null}
     </section>
+  );
+}
+
+function PromoPrice({ promo }: { promo: ApiPromo }) {
+  const discounted = promo.price !== null && promo.price !== undefined;
+  // A linked product gives us a safe automatic reference price. Admins can
+  // override it with originalPrice for bundles or editorial SPECIAL cards.
+  const referencePrice = promo.originalPrice ?? promo.menuItem?.basePrice ?? null;
+  const hasDiscount = discounted && referencePrice !== null && referencePrice > promo.price!;
+  if (!discounted && !hasDiscount) return null;
+  const salePrice = promo.price ?? referencePrice;
+  return (
+    <div className="fm-promo-price" aria-label={hasDiscount ? `Discounted price ${rs(salePrice!)}, originally ${rs(referencePrice!)}` : `Price ${rs(salePrice!)}`}>
+      {hasDiscount ? <><del>{rs(referencePrice!)}</del><strong>{rs(salePrice!)}</strong><span>deal price</span></> : <strong>{rs(salePrice!)}</strong>}
+    </div>
   );
 }
