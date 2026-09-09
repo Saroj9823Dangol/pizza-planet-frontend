@@ -122,6 +122,7 @@ export async function fetchCategoriesServer(): Promise<ApiCategory[]> {
 
 export interface ApiPromo {
   id: string;
+  kind?: 'SPECIAL' | 'OFFER';
   eyebrow: string;
   title: string;
   body: string;
@@ -205,9 +206,38 @@ export interface ApiCrust {
   sortOrder: number;
 }
 
+export interface ApiPizzaBase {
+  id: string;
+  name: string;
+  note: string | null;
+  menuItemId: string;
+  isActive: boolean;
+  sortOrder: number;
+  menuItem: ApiMenuItem;
+}
+
+export interface ApiPizzaSize {
+  id: string;
+  name: string;
+  note: string | null;
+  priceDelta: number;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 /** Crust options for the custom pizza builder — managed from the admin. */
 export async function fetchCrustsServer(): Promise<ApiCrust[]> {
   const data = await getJson<ApiCrust[]>("/api/crusts");
+  return data?.length ? data : [];
+}
+
+export async function fetchPizzaBasesServer(): Promise<ApiPizzaBase[]> {
+  const data = await getJson<ApiPizzaBase[]>("/api/pizza-bases");
+  return data?.length ? data : [];
+}
+
+export async function fetchPizzaSizesServer(): Promise<ApiPizzaSize[]> {
+  const data = await getJson<ApiPizzaSize[]>("/api/pizza-sizes");
   return data?.length ? data : [];
 }
 

@@ -9,7 +9,7 @@ import InstaStrip from "@/components/InstaStrip";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
 import PizzaBuilder from "@/components/PizzaBuilder";
-import { fetchBlogPostsServer, fetchBranchesServer, fetchCrustsServer, fetchInstagramServer, fetchMenuItemsServer, fetchPromosServer } from "@/lib/api-server";
+import { fetchBlogPostsServer, fetchBranchesServer, fetchCrustsServer, fetchInstagramServer, fetchMenuItemsServer, fetchPromosServer, fetchPizzaBasesServer, fetchPizzaSizesServer } from "@/lib/api-server";
 import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
 
@@ -17,7 +17,7 @@ import JsonLd from "@/components/JsonLd";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [promos, allItems, bestsellers, featured, posts, branches, crusts, instagram] = await Promise.all([
+  const [promos, allItems, bestsellers, featured, posts, branches, crusts, bases, sizes, instagram] = await Promise.all([
     fetchPromosServer(),
     fetchMenuItemsServer(),
     fetchMenuItemsServer({ bestseller: true }),
@@ -25,6 +25,8 @@ export default async function Home() {
     fetchBlogPostsServer(6),
     fetchBranchesServer(),
     fetchCrustsServer(),
+    fetchPizzaBasesServer(),
+    fetchPizzaSizesServer(),
     fetchInstagramServer(),
   ]);
 
@@ -120,7 +122,7 @@ export default async function Home() {
       </div>
       <main>
         <PromoBanners initialPromos={promos} />
-        <PizzaBuilder crusts={crusts} items={allItems} />
+        <PizzaBuilder crusts={crusts} bases={bases} sizes={sizes} />
         <SlowFastFood />
         <MenuShowcase
           kicker="Fan favourites, straight from the oven"

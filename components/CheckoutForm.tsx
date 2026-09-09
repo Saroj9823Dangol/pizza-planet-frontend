@@ -58,6 +58,8 @@ export default function CheckoutForm({ branches }: { branches: ApiBranch[] }) {
           source: i.source ?? "MENU",
           promoId: i.promoId,
           crustId: i.crustId,
+          baseId: i.baseId,
+          sizeId: i.sizeId,
         })),
       });
       setPlaced(order);

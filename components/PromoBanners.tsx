@@ -11,6 +11,10 @@ const SHAPES = ["fm-organic-a", "fm-organic-b", "fm-organic-c"] as const;
  */
 export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPromo[] }) {
   const promos = initialPromos && initialPromos.length ? initialPromos : [];
+  // Existing rows created before PromoKind was introduced remain useful:
+  // linked/fixed-price rows are offers; editorial rows are specials.
+  const specials = promos.filter((promo) => (promo.kind ?? (promo.menuItemId && promo.price !== null ? "OFFER" : "SPECIAL")) === "SPECIAL");
+  const offers = promos.filter((promo) => (promo.kind ?? (promo.menuItemId && promo.price !== null ? "OFFER" : "SPECIAL")) === "OFFER");
 
   // No active banners → render nothing. Never leave an empty styled section
   // (or stale static banners) behind — the section exists only when there is
@@ -22,10 +26,10 @@ export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPro
       <div className="fm-promo-heading">
         <p className="fm-kicker">Fresh from the oven</p>
         <h2 className="fm-hand-title">Specials<span className="fm-red-dash">—</span></h2>
-        <p className="fm-promo-subtitle">This week&apos;s hand-picked offers — like the menu, but with a little more going on.</p>
+        <p className="fm-promo-subtitle">Stories, events and little moments from the planet.</p>
       </div>
-      <div className="fm-promo-grid">
-        {promos.map((promo, index) => {
+      {specials.length > 0 ? <div className="fm-promo-grid fm-special-grid">
+        {specials.map((promo, index) => {
           const orderable = Boolean(promo.menuItemId && promo.price !== null);
           return (
             <article
@@ -57,7 +61,22 @@ export default function PromoBanners({ initialPromos }: { initialPromos?: ApiPro
             </article>
           );
         })}
-      </div>
+      </div> : null}
+      {offers.length > 0 ? <div className="fm-offers-wrap">
+        <div className="fm-offers-heading">
+          <div><p className="fm-kicker">Good news for hungry people</p><h3>Offers<span className="fm-red-dash">—</span></h3></div>
+          <p>Limited-time deals, built for sharing. Tap an offer to send it straight to your tray.</p>
+        </div>
+        <div className="fm-offers-rail">
+          {offers.map((promo, index) => {
+            const orderable = Boolean(promo.menuItemId && promo.price !== null);
+            return <article key={promo.id} className={`fm-offer-ticket ${index % 2 ? "fm-offer-ticket--tilt" : ""}`}>
+              <div className="fm-offer-ticket-art">{promo.image ? <img src={promo.image} alt="" /> : null}<span>{String(index + 1).padStart(2, "0")}</span></div>
+              <div className="fm-offer-ticket-copy"><p className="fm-kicker">{promo.eyebrow}</p><h4>{promo.title}</h4><p>{promo.body}</p>{orderable ? <PromoAddButton promo={promo} /> : <Link href={promo.ctaHref || "/order"} className="fm-outline-button fm-outline-button--red">{promo.ctaText}</Link>}</div>
+            </article>;
+          })}
+        </div>
+      </div> : null}
     </section>
   );
 }

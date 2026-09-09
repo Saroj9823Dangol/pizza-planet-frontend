@@ -335,6 +335,25 @@ export interface ApiCrust {
   sortOrder: number;
 }
 
+export interface ApiPizzaBase {
+  id: string;
+  name: string;
+  note: string | null;
+  menuItemId: string;
+  isActive: boolean;
+  sortOrder: number;
+  menuItem: ApiMenuItem;
+}
+
+export interface ApiPizzaSize {
+  id: string;
+  name: string;
+  note: string | null;
+  priceDelta: number;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 export interface ApiBranch {
   id: string;
   name: string;
@@ -359,9 +378,19 @@ export async function fetchBranches(): Promise<ApiBranch[]> {
   return data?.length ? data : [];
 }
 
-/** Crust options for the custom pizza builder — falls back to empty (defaults are used). */
+/** Crust options for the custom pizza builder — managed from the admin. */
 export async function fetchCrusts(): Promise<ApiCrust[]> {
   const data = await getJson<ApiCrust[]>("/api/crusts");
+  return data?.length ? data : [];
+}
+
+export async function fetchPizzaBases(): Promise<ApiPizzaBase[]> {
+  const data = await getJson<ApiPizzaBase[]>("/api/pizza-bases");
+  return data?.length ? data : [];
+}
+
+export async function fetchPizzaSizes(): Promise<ApiPizzaSize[]> {
+  const data = await getJson<ApiPizzaSize[]>("/api/pizza-sizes");
   return data?.length ? data : [];
 }
 
@@ -379,6 +408,10 @@ export interface PlaceOrderItem {
   promoId?: string;
   /** Required when source = CUSTOM — the chosen crust. */
   crustId?: string;
+  /** Required when source = CUSTOM — the curated builder base. */
+  baseId?: string;
+  /** Required when source = CUSTOM — the dynamic builder size. */
+  sizeId?: string;
 }
 
 export interface PlaceOrderPayload {

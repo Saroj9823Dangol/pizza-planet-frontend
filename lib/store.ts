@@ -17,6 +17,9 @@ export interface CartItem {
   itemId?: string;
   variantId?: string;
   toppingIds?: string[];
+  // Dynamic builder references — validated and priced by the backend.
+  baseId?: string;
+  sizeId?: string;
   // Source attribution — every line must be traceable to MENU / PROMO / CUSTOM
   source?: CartSource;
   promoId?: string;

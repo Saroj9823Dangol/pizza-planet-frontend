@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import AddToCartModal from "@/components/AddToCartModal";
 import PizzaBuilder from "@/components/PizzaBuilder";
-import { ApiBranch, ApiCrust, ApiMenuItem, fetchMenuItems, rs } from "@/lib/api";
+import { ApiBranch, ApiCrust, ApiMenuItem, ApiPizzaBase, ApiPizzaSize, fetchMenuItems, rs } from "@/lib/api";
 import { mockBranches } from "@/lib/locations-fallback";
 
-export default function FullOrder({ branches, crusts }: { branches: ApiBranch[]; crusts: ApiCrust[] }) {
+export default function FullOrder({ branches, crusts, bases, sizes }: { branches: ApiBranch[]; crusts: ApiCrust[]; bases: ApiPizzaBase[]; sizes: ApiPizzaSize[] }) {
   const [items, setItems] = useState<ApiMenuItem[]>([]);
   const locs = branches.length ? branches : mockBranches;
   const [selectedLocation, setSelectedLocation] = useState(locs[0]?.slug ?? "baneshwor");
@@ -19,7 +19,7 @@ export default function FullOrder({ branches, crusts }: { branches: ApiBranch[];
 
   return (
     <main className="fm-order-page">
-      <PizzaBuilder crusts={crusts} />
+      <PizzaBuilder crusts={crusts} bases={bases} sizes={sizes} />
       <section className="fm-order-hero fm-wave-section fm-wave-section--paper">
         <div className="fm-order-hero-copy"><p className="fm-kicker">Fresh from our oven to your table.</p><h1 className="fm-hand-title">Let&apos;s eat<span className="fm-red-dash">—</span></h1><p>Order for collection, delivery, or find a table at your nearest Pizza Planet.</p><div className="fm-button-row"><a href="#choose-oven" className="fm-red-button">Choose your oven</a><Link href="/menu" className="fm-outline-button">Explore the menu</Link></div></div>
         <div className="fm-order-hero-image fm-organic-c"><img src="https://images.unsplash.com/photo-1579751626657-72bc17010498?w=1400&q=85" alt="Pizza being prepared fresh at Pizza Planet" /></div>

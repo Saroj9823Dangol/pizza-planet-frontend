@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import FullOrder from "@/components/FullOrder";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
-import { fetchBranchesServer, fetchCrustsServer } from "@/lib/api-server";
+import { fetchBranchesServer, fetchCrustsServer, fetchPizzaBasesServer, fetchPizzaSizesServer } from "@/lib/api-server";
 import { OG_DEFAULT_IMAGE, SITE_URL } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
 
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 export default async function OrderPage() {
-  const [branches, crusts] = await Promise.all([fetchBranchesServer(), fetchCrustsServer()]);
+  const [branches, crusts, bases, sizes] = await Promise.all([fetchBranchesServer(), fetchCrustsServer(), fetchPizzaBasesServer(), fetchPizzaSizesServer()]);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -46,7 +46,7 @@ export default async function OrderPage() {
       <JsonLd data={breadcrumbSchema} />
       <Navbar />
       <main>
-        <FullOrder branches={branches} crusts={crusts} />
+        <FullOrder branches={branches} crusts={crusts} bases={bases} sizes={sizes} />
       </main>
       <Footer />
       <CartSidebar />

@@ -556,6 +556,24 @@ body::before {
 .fm-organic-b { border-radius: 42% 22% 34% 22% / 24% 31% 20% 30%; }
 .fm-organic-c { border-radius: 29% 38% 17% 40% / 28% 22% 34% 25%; }
 .fm-promo-copy { padding: 1.4rem 0 0; max-width: 31ch; }
+.fm-special-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 1120px; }
+.fm-offers-wrap { max-width: var(--page-max); margin: clamp(6rem, 12vw, 11rem) auto 0; padding: clamp(2rem, 4vw, 4rem); background: var(--ink); color: var(--paper); border-radius: 2rem 2rem 0 0; }
+.fm-offers-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 2.5rem; }
+.fm-offers-heading h3 { margin: 0; color: var(--paper); font-family: var(--font-hand); font-size: clamp(3.5rem, 7vw, 7rem); line-height: .8; text-transform: uppercase; }
+.fm-offers-heading .fm-kicker { color: var(--mustard); }
+.fm-offers-heading > p { max-width: 31ch; margin: 0; color: rgb(250 245 236 / .7); font-family: var(--font-mono); font-size: .72rem; line-height: 1.65; }
+.fm-offers-rail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.fm-offer-ticket { display: grid; grid-template-columns: 92px 1fr; gap: 1rem; min-width: 0; padding: 1rem; background: var(--paper); color: var(--ink); border-radius: 1rem; transform: rotate(-1deg); }
+.fm-offer-ticket--tilt { transform: rotate(1.2deg); }
+.fm-offer-ticket-art { position: relative; min-height: 170px; overflow: hidden; border-radius: .7rem; background: var(--paper-deep); }
+.fm-offer-ticket-art img { width: 100%; height: 100%; object-fit: cover; }
+.fm-offer-ticket-art span { position: absolute; left: .4rem; bottom: .35rem; color: white; font-family: var(--font-mono); font-size: .62rem; font-weight: 700; text-shadow: 0 1px 4px #000; }
+.fm-offer-ticket-copy { min-width: 0; }
+.fm-offer-ticket-copy .fm-kicker { margin-bottom: .65rem; font-size: .58rem; }
+.fm-offer-ticket-copy h4 { margin: 0; font-family: var(--font-sans); font-size: 1.2rem; line-height: 1; letter-spacing: -.04em; }
+.fm-offer-ticket-copy > p:not(.fm-kicker) { margin: .8rem 0 1rem; font-family: var(--font-mono); font-size: .64rem; line-height: 1.5; }
+@media (max-width: 900px) { .fm-offers-rail { grid-template-columns: 1fr; } .fm-offer-ticket { grid-template-columns: 110px 1fr; } }
+@media (max-width: 800px) { .fm-special-grid { grid-template-columns: 1fr; } .fm-offers-heading { align-items: start; flex-direction: column; } }
 .fm-promo-copy h2 {
   margin: 0;
   font-family: var(--font-sans);
